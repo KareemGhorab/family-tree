@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  VIEWER
+  EDITOR
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  ownedTrees     FamilyTree[]      @relation("TreeOwner")
+  treeMemberships FamilyTreeMember[]
+}
+
+model FamilyTree {
+  id        String   @id @default(cuid())
+  name      String
+  ownerId   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  owner   User              @relation("TreeOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members FamilyTreeMember[]
+  nodes   FamilyNode[]
+}
+
+model FamilyTreeMember {
+  userId       String
+  familyTreeId String
+  role         Role      @default(VIEWER)
+  createdAt    DateTime  @default(now())
+  deletedAt    DateTime?
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  familyTree FamilyTree @relation(fields: [familyTreeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, familyTreeId])
+  @@id([userId, familyTreeId])
+}
+
+model FamilyNode {
+  id           String    @id @default(cuid())
+  familyTreeId String
+  firstName    String
+  lastName     String?
+  birthDate    DateTime?
+  deathDate    DateTime?
+  bio          String?   @db.Text
+  birthOrder   Int?
+  motherId     String?
+  fatherId     String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  familyTree       FamilyTree   @relation(fields: [familyTreeId], references: [id], onDelete: Cascade)
+  mother           FamilyNode?  @relation("Mother", fields: [motherId], references: [id], onDelete: SetNull)
+  father           FamilyNode?  @relation("Father", fields: [fatherId], references: [id], onDelete: SetNull)
+  childrenViaMother FamilyNode[] @relation("Mother")
+  childrenViaFather FamilyNode[] @relation("Father")
+  photos          Photo[]
+}
+
+model Photo {
+  id           String   @id @default(cuid())
+  familyNodeId String
+  blobUrl      String
+  order        Int?
+  createdAt    DateTime  @default(now())
+  deletedAt    DateTime?
+
+  familyNode FamilyNode @relation(fields: [familyNodeId], references: [id], onDelete: Cascade)
+}
