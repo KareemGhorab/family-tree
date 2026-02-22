@@ -16,10 +16,23 @@
     "myTrees": "My Trees",
     "settings": "Settings",
     "switchToArabic": "Switch to Arabic",
-    "switchToEnglish": "Switch to English"
+    "switchToEnglish": "Switch to English",
+    "switchToLight": "Switch to light",
+    "switchToDark": "Switch to dark"
   },
   "home": {
     "title": "Family Tree",
     "subtitle": "Build and explore your family history"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist or was moved.",
+    "backHome": "Back to home"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please try again.",
+    "tryAgain": "Try again",
+    "backHome": "Back to home"
   }
 }
