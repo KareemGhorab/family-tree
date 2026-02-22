@@ -1,0 +1,23 @@
+{
+  "common": {
+    "appName": "Family Tree",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "noResults": "No results found"
+  },
+  "nav": {
+    "home": "Home",
+    "myTrees": "My Trees",
+    "settings": "Settings"
+  },
+  "home": {
+    "title": "Family Tree",
+    "subtitle": "Build and explore your family history"
+  }
+}
