@@ -14,7 +14,9 @@
   "nav": {
     "home": "Home",
     "myTrees": "My Trees",
-    "settings": "Settings"
+    "settings": "Settings",
+    "switchToArabic": "Switch to Arabic",
+    "switchToEnglish": "Switch to English"
   },
   "home": {
     "title": "Family Tree",

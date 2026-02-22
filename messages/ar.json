@@ -14,7 +14,9 @@
   "nav": {
     "home": "الرئيسية",
     "myTrees": "أشجاري",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "switchToArabic": "التبديل إلى العربية",
+    "switchToEnglish": "التبديل إلى الإنجليزية"
   },
   "home": {
     "title": "شجرة العائلة",
