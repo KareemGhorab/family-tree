@@ -36,7 +36,6 @@ export function Navbar() {
           Family Tree
         </Link>
 
-        {/* Desktop: center links + language */}
         <div className="hidden items-center gap-1 md:flex">
           {navLinks.map(({ href, label }) => (
             <Link
@@ -88,7 +87,6 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile menu */}
       <div
         id="mobile-menu"
         className={`border-t border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 md:hidden ${mobileOpen ? "block" : "hidden"}`}
