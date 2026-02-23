@@ -1,6 +1,6 @@
 import { CreateFamilyTreeDialog } from "@/components/CreateFamilyTreeDialog";
 import { Link } from "@/i18n/navigation";
-import { getFamilyTreesForUser } from "@/lib/family-tree";
+import { getFamilyAllTrees } from "@/lib/family-tree";
 import { getSessionOrRedirect } from "@/lib/require-session";
 import { getTranslations } from "next-intl/server";
 
@@ -10,7 +10,7 @@ export default async function TreesPage({
   params: Promise<{ locale: string }>;
 }) {
   const session = await getSessionOrRedirect(params, "/trees");
-  const trees = await getFamilyTreesForUser(session.user?.id ?? "");
+  const trees = await getFamilyAllTrees();
   const t = await getTranslations("trees");
 
   return (
