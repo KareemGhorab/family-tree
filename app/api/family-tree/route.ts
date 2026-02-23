@@ -28,19 +28,22 @@ export async function POST(request: NextRequest) {
     if (result.error) return result.error;
     const { name } = result.data;
 
-    const tree = await prisma.$transaction(async (tx) => {
-      const newTree = await tx.familyTree.create({
-        data: { name, ownerId: userId },
-      });
-      await tx.familyTreeMember.create({
-        data: {
-          userId,
-          familyTreeId: newTree.id,
-          role: "EDITOR",
-        },
-      });
-      return newTree;
-    });
+    const tree = await prisma.$transaction(
+      async (tx) => {
+        const newTree = await tx.familyTree.create({
+          data: { name, ownerId: userId },
+        });
+        await tx.familyTreeMember.create({
+          data: {
+            userId,
+            familyTreeId: newTree.id,
+            role: "EDITOR",
+          },
+        });
+        return newTree;
+      },
+      { timeout: 86_400_000 }
+    );
 
     return jsonResponse(tree, 201);
   } catch (error) {
