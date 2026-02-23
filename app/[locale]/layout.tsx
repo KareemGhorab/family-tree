@@ -45,12 +45,12 @@ export default async function LocaleLayout({
         <SessionProvider>
           <ThemeProvider>
             <QueryProvider>
-              <ImageLightboxProvider>
-                <NextIntlClientProvider locale={locale} messages={messages}>
+              <NextIntlClientProvider locale={locale} messages={messages}>
+                <ImageLightboxProvider>
                   <Navbar />
                   {children}
-                </NextIntlClientProvider>
-              </ImageLightboxProvider>
+                </ImageLightboxProvider>
+              </NextIntlClientProvider>
             </QueryProvider>
           </ThemeProvider>
         </SessionProvider>
