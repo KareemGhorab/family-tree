@@ -98,9 +98,6 @@ export function AddMemberDialog({
       form.reset();
       router.refresh();
     },
-    onError: (error) => {
-      toast.error(error.message ?? tCommon("error"));
-    },
   });
 
   function onSubmit(values: AddMemberFormValues) {

@@ -44,9 +44,6 @@ export function CreateFamilyTreeDialog() {
       form.reset({ name: "" });
       router.refresh();
     },
-    onError: (error) => {
-      toast.error(error.message ?? tCommon("error"));
-    },
   });
 
   function onSubmit(data: CreateTree) {

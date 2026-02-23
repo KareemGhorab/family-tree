@@ -4,9 +4,9 @@ import {
     useDeleteFamilyNode,
     useFamilyNode,
 } from "@/app/service/family-node/node/hooks";
-import { useImageLightbox } from "@/components/ImageLightboxProvider";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { EditNodeForm } from "@/components/EditNodeForm";
+import { useImageLightbox } from "@/components/ImageLightboxProvider";
 import { PhotoManager } from "@/components/PhotoManager";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,6 @@ import { formatDisplayDate } from "@/lib/date";
 import { Loader2, Pencil, Trash2, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface NodeDetailDialogProps {
   nodeId: string | null;
@@ -49,9 +48,6 @@ export function NodeDetailDialog({
     onSuccess: () => {
       setConfirmDeleteOpen(false);
       onClose();
-    },
-    onError: (error) => {
-      toast.error(error.message ?? tCommon("error"));
     },
   });
 

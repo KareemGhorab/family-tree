@@ -8,6 +8,7 @@ import { AddMemberDialog } from "@/components/AddMemberDialog";
 import { FamilyMemberNode } from "@/components/FamilyMemberNode";
 import { NodeDetailDialog } from "@/components/NodeDetailDialog";
 import { Button } from "@/components/ui/button";
+import { getQueryErrorMessage } from "@/lib/query-error";
 import Dagre from "@dagrejs/dagre";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -145,7 +146,7 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
           });
         })
         .catch((err) => {
-          toast.error(err?.response?.data?.error ?? tCommon("error"));
+          toast.error(getQueryErrorMessage(err));
         });
     },
     [isEditor, flatNodes, treeId, queryClient, t, tCommon]

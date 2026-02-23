@@ -78,9 +78,6 @@ export function EditNodeForm({ node, onSuccess, onCancel }: EditNodeFormProps) {
       toast.success(tCommon("save"));
       onSuccess();
     },
-    onError: (error) => {
-      toast.error(error.message ?? tCommon("error"));
-    },
   });
 
   function onSubmit(values: EditNodeValues) {
