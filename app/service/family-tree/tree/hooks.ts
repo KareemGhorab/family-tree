@@ -5,6 +5,7 @@ import {
     queryKeys,
     type FamilyTree,
     type FamilyTreeWithRoots,
+    type TreeRole,
 } from "@/app/service/types";
 import { nowIso } from "@/lib/date";
 import type { UpdateTree } from "@/lib/validations";
@@ -14,6 +15,16 @@ import {
     useQueryClient,
     type UseMutationOptions,
 } from "@tanstack/react-query";
+
+/** GET /api/family-tree/[id]/role — current user's role on this tree */
+export function useTreeRole(treeId: string | null) {
+  return useQuery({
+    queryKey: [...queryKeys.familyTree.detail(treeId ?? ""), "role"] as const,
+    queryFn: () =>
+      api.get<TreeRole>(`/api/family-tree/${treeId}/role`).then((r) => r.data),
+    enabled: !!treeId,
+  });
+}
 
 /** GET /api/family-tree/[id] — get one tree with nested roots */
 export function useFamilyTree(id: string | null) {

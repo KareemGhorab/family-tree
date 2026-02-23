@@ -1,3 +1,4 @@
+import { ImageLightboxProvider } from "@/components/ImageLightboxProvider";
 import { Navbar } from "@/components/Navbar";
 import { QueryProvider } from "@/components/QueryProvider";
 import { SessionProvider } from "@/components/SessionProvider";
@@ -44,10 +45,12 @@ export default async function LocaleLayout({
         <SessionProvider>
           <ThemeProvider>
             <QueryProvider>
-              <NextIntlClientProvider locale={locale} messages={messages}>
-                <Navbar />
-                {children}
-              </NextIntlClientProvider>
+              <ImageLightboxProvider>
+                <NextIntlClientProvider locale={locale} messages={messages}>
+                  <Navbar />
+                  {children}
+                </NextIntlClientProvider>
+              </ImageLightboxProvider>
             </QueryProvider>
           </ThemeProvider>
         </SessionProvider>

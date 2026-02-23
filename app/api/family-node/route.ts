@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
 
     const result = await parseBody(request, createNodeSchema);
     if (result.error) return result.error;
-    const { familyTreeId, firstName, lastName, birthDate, deathDate, bio, birthOrder, motherId, fatherId } = result.data;
+    const { familyTreeId, firstName, lastName, gender, birthDate, deathDate, bio, birthOrder, motherId, fatherId } = result.data;
 
     const editorError = await requireTreeEditor(authResult.user.id, familyTreeId);
     if (editorError) return editorError;
@@ -26,6 +26,9 @@ export async function POST(request: NextRequest) {
           404
         );
       }
+      if (mother.gender === "M") {
+        return errorResponse("Mother must be female", 400);
+      }
     }
 
     if (fatherId) {
@@ -38,6 +41,9 @@ export async function POST(request: NextRequest) {
           404
         );
       }
+      if (father.gender === "F") {
+        return errorResponse("Father must be male", 400);
+      }
     }
 
     const node = await prisma.familyNode.create({
@@ -45,6 +51,7 @@ export async function POST(request: NextRequest) {
         familyTreeId,
         firstName,
         lastName: lastName ?? null,
+        gender: gender ?? null,
         birthDate: birthDate ?? null,
         deathDate: deathDate ?? null,
         bio: bio ?? null,

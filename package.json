@@ -15,10 +15,12 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
+    "@dagrejs/dagre": "^2.0.4",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/adapter-pg": "^7.4.1",
     "@prisma/client": "^7.4.1",
     "@tanstack/react-query": "^5.90.21",
+    "@uploadthing/react": "^7.3.3",
     "@xyflow/react": "^12.10.1",
     "axios": "^1.13.5",
     "class-variance-authority": "^0.7.1",
@@ -37,6 +39,7 @@
     "react-hook-form": "^7.71.2",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
+    "uploadthing": "^7.7.4",
     "zod": "^4.3.6"
   },
   "devDependencies": {

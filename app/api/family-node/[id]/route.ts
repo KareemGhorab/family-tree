@@ -71,6 +71,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
           404
         );
       }
+      if (mother.gender === "M") {
+        return errorResponse("Mother must be female", 400);
+      }
     }
 
     if (data.fatherId) {
@@ -86,6 +89,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
           "Father not found or does not belong to this tree",
           404
         );
+      }
+      if (father.gender === "F") {
+        return errorResponse("Father must be male", 400);
       }
     }
 

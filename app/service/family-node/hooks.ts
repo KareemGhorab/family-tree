@@ -38,6 +38,7 @@ export function useCreateFamilyNode(
         familyTreeId: variables.familyTreeId,
         firstName: variables.firstName,
         lastName: variables.lastName ?? null,
+        gender: variables.gender ?? null,
         birthDate: toIsoString(variables.birthDate),
         deathDate: toIsoString(variables.deathDate),
         bio: variables.bio ?? null,

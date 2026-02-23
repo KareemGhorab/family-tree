@@ -27,6 +27,7 @@ export type FamilyNodeNested = {
   familyTreeId: string;
   firstName: string;
   lastName: string | null;
+  gender: "M" | "F" | null;
   birthDate: string | null;
   deathDate: string | null;
   bio: string | null;
@@ -72,3 +73,5 @@ export const queryKeys = {
     detail: (id: string) => [...queryKeys.familyNode.all, id] as const,
   },
 } as const;
+
+export type TreeRole = { role: "EDITOR" | "VIEWER" | "NONE" };

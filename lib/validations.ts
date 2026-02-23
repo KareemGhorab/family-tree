@@ -18,6 +18,7 @@ const familyNodeBase = z.object({
   familyTreeId: z.string().min(1, "familyTreeId is required"),
   firstName: z.string().min(1, "firstName is required"),
   lastName: z.string().nullable().optional(),
+  gender: z.enum(["M", "F"]).nullable().optional(),
   birthDate: optionalDate,
   deathDate: optionalDate,
   bio: z.string().nullable().optional(),

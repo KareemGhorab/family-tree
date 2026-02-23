@@ -5,6 +5,7 @@ import {
     queryKeys,
     type FamilyNodeDetail,
     type FamilyNodeFlat,
+    type Photo,
 } from "@/app/service/types";
 import { nowIso, toIsoString } from "@/lib/date";
 import type { UpdateNode } from "@/lib/validations";
@@ -156,7 +157,7 @@ export function useDeleteFamilyNode(
     },
     onSettled: () => {
       if (id) {
-        queryClient.invalidateQueries({
+        queryClient.removeQueries({
           queryKey: queryKeys.familyNode.detail(id),
         });
       }
@@ -170,5 +171,43 @@ export function useDeleteFamilyNode(
       }
     },
     ...options,
+  });
+}
+
+/** POST /api/family-node/[id]/photos — add a photo to a node */
+export function useAddPhoto(nodeId: string | null) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (blobUrl: string) =>
+      api
+        .post<Photo>(`/api/family-node/${nodeId}/photos`, { blobUrl })
+        .then((r) => r.data),
+    onSettled: () => {
+      if (nodeId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.familyNode.detail(nodeId),
+        });
+      }
+    },
+  });
+}
+
+/** DELETE /api/photo/[id] — soft-delete a photo */
+export function useDeletePhoto(nodeId: string | null) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (photoId: string) =>
+      api
+        .delete<{ message: string }>(`/api/photo/${photoId}`)
+        .then((r) => r.data),
+    onSettled: () => {
+      if (nodeId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.familyNode.detail(nodeId),
+        });
+      }
+    },
   });
 }

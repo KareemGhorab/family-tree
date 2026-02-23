@@ -1,3 +1,4 @@
+import { FamilyTreeView } from "@/components/FamilyTreeView";
 import { getSessionOrRedirect } from "@/lib/require-session";
 
 export default async function TreeDetailPage({
@@ -5,11 +6,8 @@ export default async function TreeDetailPage({
 }: {
   params: Promise<{ locale: string; id: string }>;
 }) {
+  const resolvedParams = await params;
   await getSessionOrRedirect(params, "/trees");
 
-  return (
-    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      {/* Blank page – tree detail content can be added later */}
-    </div>
-  );
+  return <FamilyTreeView treeId={resolvedParams.id} />;
 }

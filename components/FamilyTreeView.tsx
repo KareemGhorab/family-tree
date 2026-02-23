@@ -1,0 +1,198 @@
+"use client";
+
+import { api } from "@/app/service/api";
+import { useTreeRole } from "@/app/service/family-tree/tree/hooks";
+import { useFamilyTreeNodes } from "@/app/service/family-tree/tree/nodes/hooks";
+import type { FamilyNodeFlat } from "@/app/service/types";
+import { AddMemberDialog } from "@/components/AddMemberDialog";
+import { FamilyMemberNode } from "@/components/FamilyMemberNode";
+import { NodeDetailDialog } from "@/components/NodeDetailDialog";
+import { Button } from "@/components/ui/button";
+import Dagre from "@dagrejs/dagre";
+import {
+    Background,
+    Controls,
+    ReactFlow,
+    type Connection,
+    type Edge,
+    type Node,
+    type NodeTypes,
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+import { Loader2, Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useCallback, useMemo, useState } from "react";
+import { toast } from "sonner";
+
+const NODE_WIDTH = 120;
+const NODE_HEIGHT = 100;
+
+const nodeTypes: NodeTypes = {
+  familyMember: FamilyMemberNode,
+};
+
+function buildFlowData(flatNodes: FamilyNodeFlat[]) {
+  const rfNodes: Node[] = flatNodes.map((n) => ({
+    id: n.id,
+    type: "familyMember",
+    position: { x: 0, y: 0 },
+    data: {
+      firstName: n.firstName,
+      photo: n.photos[0]?.blobUrl ?? null,
+      nodeId: n.id,
+    },
+  }));
+
+  const rfEdges: Edge[] = [];
+  for (const n of flatNodes) {
+    if (n.motherId) {
+      rfEdges.push({
+        id: `e-mother-${n.id}`,
+        source: n.motherId,
+        target: n.id,
+        type: "smoothstep",
+      });
+    }
+    if (n.fatherId) {
+      rfEdges.push({
+        id: `e-father-${n.id}`,
+        source: n.fatherId,
+        target: n.id,
+        type: "smoothstep",
+      });
+    }
+  }
+
+  return layoutWithDagre(rfNodes, rfEdges);
+}
+
+function layoutWithDagre(nodes: Node[], edges: Edge[]) {
+  const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
+  g.setGraph({ rankdir: "TB", nodesep: 80, ranksep: 120 });
+
+  for (const node of nodes) {
+    g.setNode(node.id, { width: NODE_WIDTH, height: NODE_HEIGHT });
+  }
+  for (const edge of edges) {
+    g.setEdge(edge.source, edge.target);
+  }
+
+  Dagre.layout(g);
+
+  const positioned = nodes.map((node) => {
+    const pos = g.node(node.id);
+    return {
+      ...node,
+      position: {
+        x: pos.x - NODE_WIDTH / 2,
+        y: pos.y - NODE_HEIGHT / 2,
+      },
+    };
+  });
+
+  return { nodes: positioned, edges };
+}
+
+interface FamilyTreeViewProps {
+  treeId: string;
+}
+
+export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
+  const t = useTranslations("trees");
+  const tCommon = useTranslations("common");
+  const { data: flatNodes, isLoading } = useFamilyTreeNodes(treeId);
+  const { data: roleData } = useTreeRole(treeId);
+  const isEditor = roleData?.role === "EDITOR";
+
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+
+  const { nodes, edges } = useMemo(
+    () => buildFlowData(flatNodes ?? []),
+    [flatNodes]
+  );
+
+  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
+    setSelectedNodeId(node.id);
+  }, []);
+
+  const onConnect = useCallback(
+    (connection: Connection) => {
+      if (!isEditor || !flatNodes) return;
+
+      const sourceNode = flatNodes.find((n) => n.id === connection.source);
+      const targetNode = flatNodes.find((n) => n.id === connection.target);
+      if (!sourceNode || !targetNode) return;
+
+      const gender = sourceNode.gender;
+      if (!gender) {
+        toast.error(t("setGenderFirst"));
+        return;
+      }
+
+      const field = gender === "M" ? "fatherId" : "motherId";
+
+      api
+        .patch(`/api/family-node/${targetNode.id}`, { [field]: sourceNode.id })
+        .catch((err) => {
+          toast.error(err?.response?.data?.error ?? tCommon("error"));
+        });
+    },
+    [isEditor, flatNodes, t, tCommon]
+  );
+
+  if (isLoading) {
+    return (
+      <div className="flex h-[calc(100vh-3.5rem)] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
+        <span className="ml-2 text-zinc-500">{tCommon("loading")}</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative h-[calc(100vh-3.5rem)] w-full">
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        onNodeClick={onNodeClick}
+        onConnect={isEditor ? onConnect : undefined}
+        fitView
+        fitViewOptions={{ padding: 0.3 }}
+        proOptions={{ hideAttribution: true }}
+      >
+        <Background />
+        <Controls />
+      </ReactFlow>
+
+      {isEditor && (
+        <Button
+          className="absolute bottom-6 right-6 z-10 h-12 w-12 rounded-full shadow-lg"
+          size="icon"
+          onClick={() => setAddDialogOpen(true)}
+          aria-label={t("addMember")}
+          title={t("addMember")}
+        >
+          <Plus className="h-6 w-6" />
+        </Button>
+      )}
+
+      <NodeDetailDialog
+        nodeId={selectedNodeId}
+        treeId={treeId}
+        isEditor={isEditor}
+        open={!!selectedNodeId}
+        onClose={() => setSelectedNodeId(null)}
+      />
+
+      {isEditor && (
+        <AddMemberDialog
+          treeId={treeId}
+          open={addDialogOpen}
+          onClose={() => setAddDialogOpen(false)}
+        />
+      )}
+    </div>
+  );
+}

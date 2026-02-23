@@ -12,6 +12,11 @@ enum Role {
   EDITOR
 }
 
+enum Gender {
+  M
+  F
+}
+
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
@@ -86,6 +91,7 @@ model FamilyNode {
   familyTreeId String
   firstName    String
   lastName     String?
+  gender       Gender?
   birthDate    DateTime?
   deathDate    DateTime?
   bio          String?   @db.Text
