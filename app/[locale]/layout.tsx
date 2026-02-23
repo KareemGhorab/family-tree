@@ -4,11 +4,18 @@ import { QueryProvider } from "@/components/QueryProvider";
 import { SessionProvider } from "@/components/SessionProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { routing } from "@/i18n/routing";
+import type { Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import "../globals.css";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 const inter = Inter({
   variable: "--font-inter",

@@ -154,7 +154,7 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
 
   if (isLoading) {
     return (
-      <div className="flex h-[calc(100vh-3.5rem)] items-center justify-center">
+      <div className="tree-view-height flex min-h-0 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
         <span className="ml-2 text-zinc-500">{tCommon("loading")}</span>
       </div>
@@ -162,7 +162,7 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
   }
 
   return (
-    <div className="relative h-[calc(100vh-3.5rem)] w-full">
+    <div className="tree-view-height relative min-h-0 w-full overflow-hidden">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -172,6 +172,7 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
         fitView
         fitViewOptions={{ padding: 0.3 }}
         proOptions={{ hideAttribution: true }}
+        className="h-full w-full"
       >
         <Background />
         <Controls />
@@ -179,7 +180,7 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
 
       {isEditor && (
         <Button
-          className="absolute bottom-6 right-6 z-10 h-12 w-12 rounded-full shadow-lg"
+          className="absolute right-6 z-10 h-12 w-12 rounded-full shadow-lg [bottom:max(1.5rem,env(safe-area-inset-bottom))]"
           size="icon"
           onClick={() => setAddDialogOpen(true)}
           aria-label={t("addMember")}
