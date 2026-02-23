@@ -24,14 +24,16 @@ export function ImageLightbox({
       <DialogContent
         showCloseButton={false}
         overlayClassName="bg-black/90"
-        className="fixed inset-0 z-50 flex min-h-screen w-full max-w-none items-center justify-center border-0 bg-transparent p-4 shadow-none sm:p-6"
+        className="fixed inset-0 z-50 flex h-screen w-full max-w-none items-center justify-center border-0 bg-transparent p-4 shadow-none sm:p-6"
       >
         {src && (
-          <img
-            src={src}
-            alt={alt}
-            className="max-h-full max-w-full object-contain"
-          />
+          <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6">
+            <img
+              src={src}
+              alt={alt}
+              className="max-h-full max-w-full object-contain"
+            />
+          </div>
         )}
         <button
           type="button"
