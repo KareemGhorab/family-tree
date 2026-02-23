@@ -41,7 +41,12 @@
     "signOut": "Sign out"
   },
   "trees": {
-    "title": "My Trees"
+    "title": "My Trees",
+    "owner": "Owner",
+    "noTrees": "You don't have any family trees yet.",
+    "createTree": "Create family tree",
+    "dialogTitle": "New family tree",
+    "treeNameLabel": "Name"
   },
   "settings": {
     "title": "Settings"

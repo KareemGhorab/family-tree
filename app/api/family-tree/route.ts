@@ -1,5 +1,6 @@
 import { requireAuth } from "@/lib/auth-guard";
-import { errorResponse, jsonResponse, notDeleted, parseBody } from "@/lib/helpers";
+import { getFamilyTreesForUser } from "@/lib/family-tree";
+import { errorResponse, jsonResponse, parseBody } from "@/lib/helpers";
 import { prisma } from "@/lib/prisma";
 import { createTreeSchema } from "@/lib/validations";
 import { NextRequest } from "next/server";
@@ -9,13 +10,7 @@ export async function GET() {
     const authResult = await requireAuth();
     if (authResult.error) return authResult.error;
 
-    const trees = await prisma.familyTree.findMany({
-      where: notDeleted,
-      include: {
-        owner: { select: { id: true, name: true, email: true, image: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    const trees = await getFamilyTreesForUser(authResult.user.id);
     return jsonResponse(trees);
   } catch (error) {
     console.error("GET /api/family-tree error:", error);

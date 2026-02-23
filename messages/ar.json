@@ -41,7 +41,12 @@
     "signOut": "تسجيل الخروج"
   },
   "trees": {
-    "title": "أشجاري"
+    "title": "أشجاري",
+    "owner": "المالك",
+    "noTrees": "ليس لديك أي أشجار عائلية بعد.",
+    "createTree": "إنشاء شجرة عائلة",
+    "dialogTitle": "شجرة عائلة جديدة",
+    "treeNameLabel": "الاسم"
   },
   "settings": {
     "title": "الإعدادات"
