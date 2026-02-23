@@ -28,6 +28,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UploadButton } from "@uploadthing/react";
 import { X } from "lucide-react";
@@ -35,7 +36,6 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { z } from "zod";
 
 const NONE_VALUE = "__none__";
@@ -300,7 +300,7 @@ export function AddMemberDialog({
                 <FormItem>
                   <FormLabel>{t("bio")}</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Textarea {...field} rows={4} />
                   </FormControl>
                 </FormItem>
               )}

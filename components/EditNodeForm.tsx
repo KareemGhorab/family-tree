@@ -20,6 +20,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
@@ -266,7 +267,7 @@ export function EditNodeForm({ node, onSuccess, onCancel }: EditNodeFormProps) {
             <FormItem>
               <FormLabel>{t("bio")}</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Textarea {...field} rows={4} />
               </FormControl>
             </FormItem>
           )}
