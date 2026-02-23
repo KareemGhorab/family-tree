@@ -24,10 +24,12 @@ export function ImageLightbox({
       <DialogContent
         showCloseButton={false}
         overlayClassName="bg-black/90"
-        className="fixed inset-0 z-50 flex h-screen w-full max-w-none items-center justify-center border-0 bg-transparent p-4 shadow-none sm:p-6"
       >
         {src && (
-          <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6">
+          <div
+            className="grid h-full w-full place-items-center p-4 sm:p-6"
+            dir="ltr"
+          >
             <img
               src={src}
               alt={alt}
