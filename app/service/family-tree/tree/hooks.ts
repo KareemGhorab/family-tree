@@ -56,7 +56,7 @@ export function useUpdateFamilyTree(
         .patch<FamilyTree>(`/api/family-tree/${id}`, body)
         .then((r) => r.data),
     onMutate: async (variables) => {
-      if (!id) return undefined;
+      if (!id) return { previous: undefined };
       await queryClient.cancelQueries({
         queryKey: queryKeys.familyTree.detail(id),
       });
@@ -109,7 +109,8 @@ export function useDeleteFamilyTree(
     mutationFn: () =>
       api.delete<{ message: string }>(`/api/family-tree/${id}`).then((r) => r.data),
     onMutate: async () => {
-      if (!id) return undefined;
+      if (!id)
+        return { previousList: undefined, previousTree: undefined };
       await Promise.all([
         queryClient.cancelQueries({ queryKey: queryKeys.familyTree.list() }),
         queryClient.cancelQueries({
@@ -122,8 +123,14 @@ export function useDeleteFamilyTree(
       const previousTree = queryClient.getQueryData<FamilyTreeWithRoots>(
         queryKeys.familyTree.detail(id)
       );
-      queryClient.setQueryData(queryKeys.familyTree.list(), (old: unknown[]) =>
-        Array.isArray(old) ? old.filter((t) => t.id !== id) : []
+      queryClient.setQueryData(
+        queryKeys.familyTree.list(),
+        (old: unknown) =>
+          Array.isArray(old)
+            ? (old as Array<{ id: string; name: string; ownerId: string }>).filter(
+                (t: { id: string }) => t.id !== id
+              )
+            : []
       );
       queryClient.removeQueries({ queryKey: queryKeys.familyTree.detail(id) });
       return { previousList, previousTree };
