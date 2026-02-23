@@ -1,5 +1,5 @@
 import { requireAuth } from "@/lib/auth-guard";
-import { getFamilyTreesForUser } from "@/lib/family-tree";
+import { getFamilyTreesForUser, getFamilyAllTrees } from "@/lib/family-tree";
 import { errorResponse, jsonResponse, parseBody } from "@/lib/helpers";
 import { prisma } from "@/lib/prisma";
 import { createTreeSchema } from "@/lib/validations";
@@ -10,7 +10,7 @@ export async function GET() {
     const authResult = await requireAuth();
     if (authResult.error) return authResult.error;
 
-    const trees = await getFamilyTreesForUser(authResult.user.id);
+    const trees = await getFamilyAllTrees();
     return jsonResponse(trees);
   } catch (error) {
     console.error("GET /api/family-tree error:", error);

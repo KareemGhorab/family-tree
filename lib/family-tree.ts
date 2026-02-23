@@ -16,3 +16,13 @@ export async function getFamilyTreesForUser(userId: string) {
     orderBy: { createdAt: "desc" },
   });
 }
+
+export async function getFamilyAllTrees() {
+  return prisma.familyTree.findMany({
+    where: notDeleted,
+    include: {
+      owner: { select: { id: true, name: true, email: true, image: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
