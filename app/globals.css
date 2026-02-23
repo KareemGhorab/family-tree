@@ -127,6 +127,11 @@ body {
   box-sizing: border-box;
 }
 
+.dialog-max-height {
+  max-height: calc(100vh - 2rem);
+  max-height: calc(100svh - 2rem);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
