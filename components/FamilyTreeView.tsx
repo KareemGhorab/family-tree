@@ -3,12 +3,13 @@
 import { api } from "@/app/service/api";
 import { useTreeRole } from "@/app/service/family-tree/tree/hooks";
 import { useFamilyTreeNodes } from "@/app/service/family-tree/tree/nodes/hooks";
-import type { FamilyNodeFlat } from "@/app/service/types";
+import { queryKeys, type FamilyNodeFlat } from "@/app/service/types";
 import { AddMemberDialog } from "@/components/AddMemberDialog";
 import { FamilyMemberNode } from "@/components/FamilyMemberNode";
 import { NodeDetailDialog } from "@/components/NodeDetailDialog";
 import { Button } from "@/components/ui/button";
 import Dagre from "@dagrejs/dagre";
+import { useQueryClient } from "@tanstack/react-query";
 import {
     Background,
     Controls,
@@ -100,6 +101,7 @@ interface FamilyTreeViewProps {
 export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
   const t = useTranslations("trees");
   const tCommon = useTranslations("common");
+  const queryClient = useQueryClient();
   const { data: flatNodes, isLoading } = useFamilyTreeNodes(treeId);
   const { data: roleData } = useTreeRole(treeId);
   const isEditor = roleData?.role === "EDITOR";
@@ -134,11 +136,19 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
 
       api
         .patch(`/api/family-node/${targetNode.id}`, { [field]: sourceNode.id })
+        .then(() => {
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.familyTree.nodes(treeId),
+          });
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.familyTree.detail(treeId),
+          });
+        })
         .catch((err) => {
           toast.error(err?.response?.data?.error ?? tCommon("error"));
         });
     },
-    [isEditor, flatNodes, t, tCommon]
+    [isEditor, flatNodes, treeId, queryClient, t, tCommon]
   );
 
   if (isLoading) {
