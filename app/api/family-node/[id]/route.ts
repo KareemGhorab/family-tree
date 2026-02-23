@@ -1,3 +1,4 @@
+import { requireAuth, requireTreeEditor } from "@/lib/auth-guard";
 import { errorResponse, jsonResponse, notDeleted, parseBody } from "@/lib/helpers";
 import { prisma } from "@/lib/prisma";
 import { updateNodeSchema } from "@/lib/validations";
@@ -7,6 +8,9 @@ type RouteContext = { params: Promise<{ id: string }> };
 
 export async function GET(_request: NextRequest, context: RouteContext) {
   try {
+    const authResult = await requireAuth();
+    if (authResult.error) return authResult.error;
+
     const { id } = await context.params;
 
     const node = await prisma.familyNode.findFirst({
@@ -34,6 +38,9 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 
 export async function PATCH(request: NextRequest, context: RouteContext) {
   try {
+    const authResult = await requireAuth();
+    if (authResult.error) return authResult.error;
+
     const { id } = await context.params;
 
     const existing = await prisma.familyNode.findFirst({
@@ -42,6 +49,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     if (!existing) {
       return errorResponse("Family node not found", 404);
     }
+
+    const editorError = await requireTreeEditor(authResult.user.id, existing.familyTreeId);
+    if (editorError) return editorError;
 
     const result = await parseBody(request, updateNodeSchema);
     if (result.error) return result.error;
@@ -102,6 +112,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
 export async function DELETE(_request: NextRequest, context: RouteContext) {
   try {
+    const authResult = await requireAuth();
+    if (authResult.error) return authResult.error;
+
     const { id } = await context.params;
 
     const existing = await prisma.familyNode.findFirst({
@@ -110,6 +123,9 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
     if (!existing) {
       return errorResponse("Family node not found", 404);
     }
+
+    const editorError = await requireTreeEditor(authResult.user.id, existing.familyTreeId);
+    if (editorError) return editorError;
 
     const now = new Date();
 

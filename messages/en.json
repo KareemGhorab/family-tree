@@ -34,5 +34,16 @@
     "description": "An unexpected error occurred. Please try again.",
     "tryAgain": "Try again",
     "backHome": "Back to home"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signInWithGoogle": "Sign in with Google",
+    "signOut": "Sign out"
+  },
+  "trees": {
+    "title": "My Trees"
+  },
+  "settings": {
+    "title": "Settings"
   }
 }

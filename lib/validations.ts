@@ -8,7 +8,6 @@ const optionalDate = z
 
 export const createTreeSchema = z.object({
   name: z.string().min(1, "name is required"),
-  ownerId: z.string().min(1, "ownerId is required"),
 });
 
 export const updateTreeSchema = z.object({

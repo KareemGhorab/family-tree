@@ -1,11 +1,15 @@
-import { NextRequest } from "next/server";
+import { requireAuth } from "@/lib/auth-guard";
+import { errorResponse, jsonResponse, notDeleted } from "@/lib/helpers";
 import { prisma } from "@/lib/prisma";
-import { notDeleted, jsonResponse, errorResponse } from "@/lib/helpers";
+import { NextRequest } from "next/server";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
 export async function GET(_request: NextRequest, context: RouteContext) {
   try {
+    const authResult = await requireAuth();
+    if (authResult.error) return authResult.error;
+
     const { id } = await context.params;
 
     const tree = await prisma.familyTree.findFirst({

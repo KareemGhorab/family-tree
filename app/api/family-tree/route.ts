@@ -1,3 +1,4 @@
+import { requireAuth } from "@/lib/auth-guard";
 import { errorResponse, jsonResponse, notDeleted, parseBody } from "@/lib/helpers";
 import { prisma } from "@/lib/prisma";
 import { createTreeSchema } from "@/lib/validations";
@@ -5,6 +6,9 @@ import { NextRequest } from "next/server";
 
 export async function GET() {
   try {
+    const authResult = await requireAuth();
+    if (authResult.error) return authResult.error;
+
     const trees = await prisma.familyTree.findMany({
       where: notDeleted,
       include: {
@@ -21,24 +25,21 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireAuth();
+    if (authResult.error) return authResult.error;
+    const userId = authResult.user.id;
+
     const result = await parseBody(request, createTreeSchema);
     if (result.error) return result.error;
-    const { name, ownerId } = result.data;
-
-    const owner = await prisma.user.findFirst({
-      where: { id: ownerId, ...notDeleted },
-    });
-    if (!owner) {
-      return errorResponse("Owner not found", 404);
-    }
+    const { name } = result.data;
 
     const tree = await prisma.$transaction(async (tx) => {
       const newTree = await tx.familyTree.create({
-        data: { name, ownerId },
+        data: { name, ownerId: userId },
       });
       await tx.familyTreeMember.create({
         data: {
-          userId: ownerId,
+          userId,
           familyTreeId: newTree.id,
           role: "EDITOR",
         },

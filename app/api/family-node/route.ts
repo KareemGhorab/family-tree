@@ -1,3 +1,4 @@
+import { requireAuth, requireTreeEditor } from "@/lib/auth-guard";
 import { errorResponse, jsonResponse, notDeleted, parseBody } from "@/lib/helpers";
 import { prisma } from "@/lib/prisma";
 import { createNodeSchema } from "@/lib/validations";
@@ -5,16 +6,15 @@ import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireAuth();
+    if (authResult.error) return authResult.error;
+
     const result = await parseBody(request, createNodeSchema);
     if (result.error) return result.error;
     const { familyTreeId, firstName, lastName, birthDate, deathDate, bio, birthOrder, motherId, fatherId } = result.data;
 
-    const tree = await prisma.familyTree.findFirst({
-      where: { id: familyTreeId, ...notDeleted },
-    });
-    if (!tree) {
-      return errorResponse("Family tree not found", 404);
-    }
+    const editorError = await requireTreeEditor(authResult.user.id, familyTreeId);
+    if (editorError) return editorError;
 
     if (motherId) {
       const mother = await prisma.familyNode.findFirst({

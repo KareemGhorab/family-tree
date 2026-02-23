@@ -22,8 +22,36 @@ model User {
   updatedAt     DateTime  @updatedAt
   deletedAt     DateTime?
 
-  ownedTrees     FamilyTree[]      @relation("TreeOwner")
+  accounts        Account[]
+  sessions        Session[]
+  ownedTrees      FamilyTree[]      @relation("TreeOwner")
   treeMemberships FamilyTreeMember[]
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model FamilyTree {

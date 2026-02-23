@@ -1,16 +1,19 @@
 "use client";
 
+import { UserMenu } from "@/components/UserMenu";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Languages, Menu, Moon, Sun } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export function Navbar() {
   const t = useTranslations("nav");
   const locale = useLocale();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { data: session } = useSession();
 
   const { resolvedTheme, setTheme } = useTheme();
   const nextLocale = locale === "en" ? "ar" : "en";
@@ -20,11 +23,16 @@ export function Navbar() {
   const isDark = resolvedTheme === "dark";
   const themeLabel = isDark ? t("switchToLight") : t("switchToDark");
 
-  const navLinks = [
-    { href: "/", label: t("home") },
-    { href: "/trees", label: t("myTrees") },
-    { href: "/settings", label: t("settings") },
-  ] as const;
+  const navLinks = useMemo(() => {
+    const links = [{ href: "/", label: t("home") }];
+    if (session) {
+      links.push(
+        { href: "/trees", label: t("myTrees") },
+        { href: "/settings", label: t("settings") }
+      );
+    }
+    return links;
+  }, [session, t]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-zinc-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:border-zinc-800 dark:bg-zinc-950/95 dark:supports-[backdrop-filter]:bg-zinc-950/80">
@@ -73,6 +81,8 @@ export function Navbar() {
             <Languages className="h-5 w-5" aria-hidden />
             <span className="sr-only">{switchLabel}</span>
           </Link>
+
+          <UserMenu />
 
           <button
             type="button"

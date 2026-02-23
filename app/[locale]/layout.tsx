@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { QueryProvider } from "@/components/QueryProvider";
+import { SessionProvider } from "@/components/SessionProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { routing } from "@/i18n/routing";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
@@ -40,14 +41,16 @@ export default async function LocaleLayout({
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} antialiased font-sans`}
       >
-        <ThemeProvider>
-          <QueryProvider>
-            <NextIntlClientProvider locale={locale} messages={messages}>
-              <Navbar />
-              {children}
-            </NextIntlClientProvider>
-          </QueryProvider>
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider>
+            <QueryProvider>
+              <NextIntlClientProvider locale={locale} messages={messages}>
+                <Navbar />
+                {children}
+              </NextIntlClientProvider>
+            </QueryProvider>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );
