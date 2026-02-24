@@ -227,15 +227,13 @@ function Detail({
   value,
 }: {
   label: string;
-  value: string | null | undefined;
+  value: string | number | null | undefined;
 }) {
-  const t = useTranslations("trees");
+  if (value == null || value === "") return null;
   return (
     <>
       <dt className="font-medium text-zinc-500 dark:text-zinc-400">{label}</dt>
-      <dd className="text-zinc-900 dark:text-zinc-100">
-        {value ?? t("none")}
-      </dd>
+      <dd className="text-zinc-900 dark:text-zinc-100">{String(value)}</dd>
     </>
   );
 }
