@@ -72,6 +72,7 @@
     "uploadPhoto": "Upload photo",
     "removePhoto": "Remove",
     "setGenderFirst": "Set gender on the source node first",
+    "loginFirst": "Please sign in to view this family tree.",
     "motherMustBeFemale": "Mother must be female",
     "fatherMustBeMale": "Father must be male"
   },

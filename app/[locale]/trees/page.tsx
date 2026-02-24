@@ -1,7 +1,6 @@
-import { CreateFamilyTreeDialog } from "@/components/CreateFamilyTreeDialog";
-import { Link } from "@/i18n/navigation";
+import { TreeCardLink } from "@/components/TreeCardLink";
 import { getFamilyAllTrees } from "@/lib/family-tree";
-import { getSessionOrRedirect } from "@/lib/require-session";
+// import { getSessionOrRedirect } from "@/lib/require-session";
 import { getTranslations } from "next-intl/server";
 
 export default async function TreesPage({
@@ -9,7 +8,7 @@ export default async function TreesPage({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const session = await getSessionOrRedirect(params, "/trees");
+  // const session = await getSessionOrRedirect(params, "/trees");
   const trees = await getFamilyAllTrees();
   const t = await getTranslations("trees");
 
@@ -28,17 +27,11 @@ export default async function TreesPage({
         <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {trees.map((tree) => (
             <li key={tree.id}>
-              <Link
-                href={`/trees/${tree.id}`}
-                className="block rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
-              >
-                <span className="font-medium text-zinc-900 dark:text-zinc-100">
-                  {tree.name}
-                </span>
-                <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                  {t("owner")}: {tree.owner?.name ?? tree.owner?.email ?? "—"}
-                </p>
-              </Link>
+              <TreeCardLink
+                treeId={tree.id}
+                name={tree.name}
+                ownerLabel={`${t("owner")}: ${tree.owner?.name ?? tree.owner?.email ?? "—"}`}
+              />
             </li>
           ))}
         </ul>

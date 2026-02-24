@@ -72,6 +72,7 @@
     "uploadPhoto": "رفع صورة",
     "removePhoto": "إزالة",
     "setGenderFirst": "حدد الجنس على العقدة المصدر أولاً",
+    "loginFirst": "يرجى تسجيل الدخول لعرض هذه الشجرة العائلية.",
     "motherMustBeFemale": "يجب أن تكون الأم أنثى",
     "fatherMustBeMale": "يجب أن يكون الأب ذكراً"
   },
