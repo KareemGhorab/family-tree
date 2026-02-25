@@ -10,7 +10,11 @@
     "edit": "Edit",
     "create": "Create",
     "search": "Search",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "retry": "Try again",
+    "install": "Install",
+    "installApp": "Install the app for a better experience",
+    "installAppIOS": "Tap the Share button and Add to Home Screen"
   },
   "nav": {
     "home": "Home",

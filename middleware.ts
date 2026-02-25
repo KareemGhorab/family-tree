@@ -6,6 +6,9 @@ const REDIRECT_AFTER_SIGNIN_COOKIE = "redirect_after_signin";
 const intlMiddleware = createIntlMiddleware(routing);
 
 export default function middleware(request: NextRequest) {
+  if (request.nextUrl.pathname === "/offline") {
+    return NextResponse.next();
+  }
   const redirectPath = request.cookies.get(REDIRECT_AFTER_SIGNIN_COOKIE)?.value;
   if (redirectPath?.startsWith("/") && !redirectPath.startsWith("//")) {
     const url = new URL(redirectPath, request.url);

@@ -1,8 +1,10 @@
+import { withSerwist } from "@serwist/turbopack";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin();
 
-export default withNextIntl({
+export default withSerwist(
+  withNextIntl({
   images: {
     remotePatterns: [
       {
@@ -23,4 +25,5 @@ export default withNextIntl({
       },
     ],
   },
-});
+})
+);

@@ -20,6 +20,12 @@
 # production
 /build
 
+# Serwist
+public/sw*.js
+public/swe-worker*.js
+public/workbox*.js
+public/sourcemaps*.js
+
 # misc
 .DS_Store
 *.pem
