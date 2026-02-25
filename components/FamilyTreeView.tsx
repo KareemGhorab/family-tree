@@ -176,7 +176,7 @@ async function layoutWithElk(
       layoutOptions: {
         "elk.algorithm": "layered",
         "elk.direction": "RIGHT",
-        "elk.spacing.nodeNode": "40",
+        "elk.spacing.nodeNode": "160",
       },
       children: [makeElkPersonNode(a), makeElkPersonNode(b)],
     });
@@ -336,6 +336,8 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
         onConnect={isEditor ? onConnect : undefined}
         fitView
         fitViewOptions={{ padding: 0.3 }}
+        minZoom={0.05}
+        maxZoom={4}
         proOptions={{ hideAttribution: true }}
         className="h-full w-full"
       >
