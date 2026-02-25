@@ -202,7 +202,7 @@ async function layoutWithElk(
       "elk.layered.nodePlacement.strategy": "NETWORK_SIMPLEX",
       "elk.layered.thoroughness": "80",
       "elk.separateConnectedComponents": "false",
-      "elk.edgeRouting": "POLYLINE",
+      "elk.edgeRouting": "ORTHOGONAL",
       "elk.hierarchyHandling": "INCLUDE_CHILDREN",
 
     //   "elk.portConstraints": "FREE",
@@ -428,7 +428,6 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
         className="h-full w-full"
       >
         <Background />
-        <Controls />
       </ReactFlow>
 
       {isEditor && (
