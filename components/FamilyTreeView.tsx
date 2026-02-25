@@ -190,7 +190,6 @@ async function layoutWithElk(
         "elk.separateConnectedComponents": "false",
         "elk.edgeRouting": "ORTHOGONAL",
         "elk.hierarchyHandling": "INCLUDE_CHILDREN",
-
         "elk.spacing.edgeEdge": "20",
         "elk.layered.spacing.edgeEdgeBetweenLayers": "50",
     },
@@ -219,7 +218,23 @@ async function layoutWithElk(
     position: positions.get(node.id) ?? { x: 0, y: 0 },
   }));
 
-  return { nodes: positioned, edges };
+  const positionedEdges = edges.map((rfEdge) => {
+    const elkEdge = layout.edges?.find((e) => e.id === rfEdge.id);
+    if (!elkEdge || !elkEdge.sections || elkEdge.sections.length === 0) {
+      return rfEdge;
+    }
+
+    return {
+      ...rfEdge,
+      type: "elkEdge",
+      data: {
+        ...rfEdge.data,
+        sections: elkEdge.sections,
+      },
+    };
+  });
+
+  return { nodes: positioned, edges: positionedEdges };
 }
 
 interface FamilyTreeViewProps {
@@ -267,6 +282,7 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
 
     const a = samples[samples.length - 2];
     const b = samples[samples.length - 1];
+    if (performance.now() - b.time > 100) return;
     const zoomDelta = Math.abs(b.viewport.zoom - a.viewport.zoom);
     if (zoomDelta > 0.001) return;
 
@@ -302,8 +318,9 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
         y: viewport.y + vy * elapsed,
         zoom: viewport.zoom,
       };
-      vx *= FRICTION;
-      vy *= FRICTION;
+      const frictionMultiplier = Math.pow(FRICTION, elapsed * 60);
+      vx *= frictionMultiplier;
+      vy *= frictionMultiplier;
 
       if (Math.abs(vx) < MIN_VELOCITY && Math.abs(vy) < MIN_VELOCITY) return;
       flowInstanceRef.current?.setViewport(viewport);
