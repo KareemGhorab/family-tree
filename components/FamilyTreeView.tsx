@@ -20,12 +20,14 @@ import {
     type Edge,
     type Node,
     type NodeTypes,
+    type ReactFlowInstance,
+    type Viewport,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import ELK, { type ElkNode } from "elkjs/lib/elk.bundled.js";
 import { Loader2, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 const NODE_WIDTH = 120;
@@ -198,10 +200,15 @@ async function layoutWithElk(
       "elk.layered.crossingMinimization.strategy": "LAYER_SWEEP",
       "elk.layered.crossingMinimization.greedySwitch.type": "TWO_SIDED",
       "elk.layered.nodePlacement.strategy": "NETWORK_SIMPLEX",
-      "elk.layered.thoroughness": "40",
+      "elk.layered.thoroughness": "80",
       "elk.separateConnectedComponents": "false",
-      "elk.edgeRouting": "ORTHOGONAL",
+      "elk.edgeRouting": "POLYLINE",
       "elk.hierarchyHandling": "INCLUDE_CHILDREN",
+
+    //   "elk.portConstraints": "FREE",
+    //   "elk.edgeRouting": "ORTHOGONAL",
+    //   "elk.spacing.edgeEdge": "150",
+    //   "elk.layered.considerModelOrder.strategy": "NONE"
     },
     children: rootChildren,
     edges: edges.map((e) => {
@@ -245,6 +252,81 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
 
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
+
+  const flowInstanceRef = useRef<ReactFlowInstance | null>(null);
+  const moveSamplesRef = useRef<{ viewport: Viewport; time: number }[]>([]);
+  const inertiaRafRef = useRef<number | null>(null);
+
+  const onInit = useCallback((instance: ReactFlowInstance) => {
+    flowInstanceRef.current = instance;
+  }, []);
+
+  const onMoveStart = useCallback(() => {
+    if (inertiaRafRef.current != null) {
+      cancelAnimationFrame(inertiaRafRef.current);
+      inertiaRafRef.current = null;
+    }
+  }, []);
+
+  const onMove = useCallback((_event: MouseEvent | TouchEvent | null, viewport: Viewport) => {
+    if (_event != null) {
+      const samples = moveSamplesRef.current;
+      samples.push({ viewport: { ...viewport }, time: performance.now() });
+      if (samples.length > 8) samples.shift();
+    }
+  }, []);
+
+  const onMoveEnd = useCallback((event: MouseEvent | TouchEvent | null) => {
+    if (event == null || !flowInstanceRef.current) return;
+    const samples = moveSamplesRef.current;
+    if (samples.length < 2) return;
+
+    const a = samples[samples.length - 2];
+    const b = samples[samples.length - 1];
+    const zoomDelta = Math.abs(b.viewport.zoom - a.viewport.zoom);
+    if (zoomDelta > 0.001) return;
+
+    const dt = (b.time - a.time) / 1000;
+    if (dt <= 0) return;
+
+    let vx = (b.viewport.x - a.viewport.x) / dt;
+    let vy = (b.viewport.y - a.viewport.y) / dt;
+    const velocityScale = 1.15;
+    vx *= velocityScale;
+    vy *= velocityScale;
+    const maxSpeed = 2800;
+    const speed = Math.sqrt(vx * vx + vy * vy);
+    if (speed > maxSpeed) {
+      const scale = maxSpeed / speed;
+      vx *= scale;
+      vy *= scale;
+    }
+
+    const FRICTION = 0.91;
+    const MIN_VELOCITY = 6;
+
+    let viewport: Viewport = { ...b.viewport };
+    let lastTime = performance.now();
+
+    const tick = () => {
+      const now = performance.now();
+      const elapsed = (now - lastTime) / 1000;
+      lastTime = now;
+
+      viewport = {
+        x: viewport.x + vx * elapsed,
+        y: viewport.y + vy * elapsed,
+        zoom: viewport.zoom,
+      };
+      vx *= FRICTION;
+      vy *= FRICTION;
+
+      if (Math.abs(vx) < MIN_VELOCITY && Math.abs(vy) < MIN_VELOCITY) return;
+      flowInstanceRef.current?.setViewport(viewport);
+      inertiaRafRef.current = requestAnimationFrame(tick);
+    };
+    inertiaRafRef.current = requestAnimationFrame(tick);
+  }, []);
 
   const {
     nodes: rawNodes,
@@ -334,6 +416,10 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
         nodeTypes={nodeTypes}
         onNodeClick={onNodeClick}
         onConnect={isEditor ? onConnect : undefined}
+        onInit={onInit}
+        onMove={onMove}
+        onMoveStart={onMoveStart}
+        onMoveEnd={onMoveEnd}
         fitView
         fitViewOptions={{ padding: 0.3 }}
         minZoom={0.05}
