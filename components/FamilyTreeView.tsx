@@ -433,7 +433,7 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
 
       {isEditor && (
         <Button
-          className="absolute right-6 z-10 h-12 w-12 rounded-full shadow-lg [bottom:max(1.5rem,env(safe-area-inset-bottom))]"
+          className="fixed right-6 z-[60] h-12 w-12 rounded-full shadow-lg [bottom:max(1.5rem,env(safe-area-inset-bottom))]"
           size="icon"
           onClick={() => setAddDialogOpen(true)}
           aria-label={t("addMember")}
