@@ -1,8 +1,8 @@
 "use client";
 
 import { useUpdateFamilyNode } from "@/app/service/family-node/node/hooks";
-import { useFamilyTreeNodes } from "@/app/service/family-tree/tree/nodes/hooks";
 import type { FamilyNodeDetail } from "@/app/service/types";
+import { ParentSelect } from "@/components/ParentSelect";
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -57,7 +57,6 @@ function toDateInput(iso: string | null): string {
 export function EditNodeForm({ node, onSuccess, onCancel }: EditNodeFormProps) {
   const t = useTranslations("trees");
   const tCommon = useTranslations("common");
-  const { data: existingNodes } = useFamilyTreeNodes(node.familyTreeId);
 
   const form = useForm<EditNodeValues>({
     resolver: zodResolver(editNodeSchema),
@@ -93,18 +92,10 @@ export function EditNodeForm({ node, onSuccess, onCancel }: EditNodeFormProps) {
       deathDate: values.deathDate ? new Date(values.deathDate) : null,
       bio: values.bio || null,
       birthOrder: values.birthOrder ? parseInt(values.birthOrder, 10) : null,
-      motherId:
-        values.motherId && values.motherId !== NONE_VALUE
-          ? values.motherId
-          : null,
-      fatherId:
-        values.fatherId && values.fatherId !== NONE_VALUE
-          ? values.fatherId
-          : null,
+      motherId: values.motherId || null,
+      fatherId: values.fatherId || null,
     });
   }
-
-  const nodeOptions = (existingNodes ?? []).filter((n) => n.id !== node.id);
 
   return (
     <Form {...form}>
@@ -206,27 +197,18 @@ export function EditNodeForm({ node, onSuccess, onCancel }: EditNodeFormProps) {
             name="motherId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("mother")}</FormLabel>
-                <Select
-                  value={field.value || NONE_VALUE}
-                  onValueChange={(v) =>
-                    field.onChange(v === NONE_VALUE ? "" : v)
-                  }
-                >
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value={NONE_VALUE}>{t("none")}</SelectItem>
-                    {nodeOptions.map((n) => (
-                      <SelectItem key={n.id} value={n.id}>
-                        {n.firstName} {n.lastName ?? ""}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <ParentSelect
+                    treeId={node.familyTreeId}
+                    gender="F"
+                    label={t("mother")}
+                    value={field.value ?? ""}
+                    onChange={(id) => field.onChange(id)}
+                    noneLabel={t("none")}
+                    excludeId={node.id}
+                  />
+                </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -235,27 +217,18 @@ export function EditNodeForm({ node, onSuccess, onCancel }: EditNodeFormProps) {
             name="fatherId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("father")}</FormLabel>
-                <Select
-                  value={field.value || NONE_VALUE}
-                  onValueChange={(v) =>
-                    field.onChange(v === NONE_VALUE ? "" : v)
-                  }
-                >
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value={NONE_VALUE}>{t("none")}</SelectItem>
-                    {nodeOptions.map((n) => (
-                      <SelectItem key={n.id} value={n.id}>
-                        {n.firstName} {n.lastName ?? ""}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <ParentSelect
+                    treeId={node.familyTreeId}
+                    gender="M"
+                    label={t("father")}
+                    value={field.value ?? ""}
+                    onChange={(id) => field.onChange(id)}
+                    noneLabel={t("none")}
+                    excludeId={node.id}
+                  />
+                </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />

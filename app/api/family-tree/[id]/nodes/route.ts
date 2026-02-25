@@ -1,3 +1,4 @@
+import { Prisma } from "@/app/generated/prisma/client";
 import { requireAuth } from "@/lib/auth-guard";
 import { errorResponse, jsonResponse, notDeleted } from "@/lib/helpers";
 import { prisma } from "@/lib/prisma";
@@ -5,12 +6,18 @@ import { NextRequest } from "next/server";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
-export async function GET(_request: NextRequest, context: RouteContext) {
+export async function GET(request: NextRequest, context: RouteContext) {
   try {
     const authResult = await requireAuth();
     if (authResult.error) return authResult.error;
 
     const { id } = await context.params;
+    const searchParams = request.nextUrl.searchParams;
+    const genderParam = searchParams.get("gender");
+    const gender: "M" | "F" | undefined =
+      genderParam === "M" || genderParam === "F" ? genderParam : undefined;
+    const search = searchParams.get("search")?.trim();
+    const hasSearch = search !== undefined && search.length > 0;
 
     const tree = await prisma.familyTree.findFirst({
       where: { id, ...notDeleted },
@@ -19,8 +26,16 @@ export async function GET(_request: NextRequest, context: RouteContext) {
       return errorResponse("Family tree not found", 404);
     }
 
+    const where: Prisma.FamilyNodeWhereInput = {
+      familyTreeId: id,
+      ...notDeleted,
+    };
+    if (gender != null) where.gender = gender;
+    if (hasSearch)
+      where.firstName = { contains: search!, mode: "insensitive" };
+
     const nodes = await prisma.familyNode.findMany({
-      where: { familyTreeId: id, ...notDeleted },
+      where,
       include: { photos: { where: notDeleted } },
       orderBy: { birthOrder: "asc" },
     });

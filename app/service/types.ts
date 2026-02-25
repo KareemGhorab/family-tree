@@ -65,8 +65,11 @@ export const queryKeys = {
     all: ["family-tree"] as const,
     list: () => [...queryKeys.familyTree.all] as const,
     detail: (id: string) => [...queryKeys.familyTree.all, id] as const,
-    nodes: (treeId: string) =>
-      [...queryKeys.familyTree.all, treeId, "nodes"] as const,
+    nodes: (
+      treeId: string,
+      filters?: { gender?: "M" | "F"; search?: string }
+    ) =>
+      [...queryKeys.familyTree.all, treeId, "nodes", filters ?? null] as const,
   },
   familyNode: {
     all: ["family-node"] as const,

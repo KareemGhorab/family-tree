@@ -3,7 +3,7 @@
 import type { OurFileRouter } from "@/app/api/uploadthing/core";
 import { api } from "@/app/service/api";
 import { useCreateFamilyNode } from "@/app/service/family-node/hooks";
-import { useFamilyTreeNodes } from "@/app/service/family-tree/tree/nodes/hooks";
+import { ParentSelect } from "@/components/ParentSelect";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -68,7 +68,6 @@ export function AddMemberDialog({
   const t = useTranslations("trees");
   const tCommon = useTranslations("common");
   const router = useRouter();
-  const { data: existingNodes } = useFamilyTreeNodes(open ? treeId : null);
   const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
 
   const form = useForm<AddMemberFormValues>({
@@ -113,18 +112,10 @@ export function AddMemberDialog({
       deathDate: values.deathDate ? new Date(values.deathDate) : null,
       bio: values.bio || null,
       birthOrder: values.birthOrder ? parseInt(values.birthOrder, 10) : null,
-      motherId:
-        values.motherId && values.motherId !== NONE_VALUE
-          ? values.motherId
-          : null,
-      fatherId:
-        values.fatherId && values.fatherId !== NONE_VALUE
-          ? values.fatherId
-          : null,
+      motherId: values.motherId || null,
+      fatherId: values.fatherId || null,
     });
   }
-
-  const nodeOptions = existingNodes ?? [];
 
   return (
     <Dialog
@@ -239,27 +230,17 @@ export function AddMemberDialog({
                 name="motherId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("mother")}</FormLabel>
-                    <Select
-                      value={field.value || NONE_VALUE}
-                      onValueChange={(v) =>
-                        field.onChange(v === NONE_VALUE ? "" : v)
-                      }
-                    >
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={NONE_VALUE}>{t("none")}</SelectItem>
-                        {nodeOptions.map((n) => (
-                          <SelectItem key={n.id} value={n.id}>
-                            {n.firstName} {n.lastName ?? ""}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <ParentSelect
+                        treeId={treeId}
+                        gender="F"
+                        label={t("mother")}
+                        value={field.value ?? ""}
+                        onChange={(id) => field.onChange(id)}
+                        noneLabel={t("none")}
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -268,27 +249,17 @@ export function AddMemberDialog({
                 name="fatherId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("father")}</FormLabel>
-                    <Select
-                      value={field.value || NONE_VALUE}
-                      onValueChange={(v) =>
-                        field.onChange(v === NONE_VALUE ? "" : v)
-                      }
-                    >
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={NONE_VALUE}>{t("none")}</SelectItem>
-                        {nodeOptions.map((n) => (
-                          <SelectItem key={n.id} value={n.id}>
-                            {n.firstName} {n.lastName ?? ""}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <ParentSelect
+                        treeId={treeId}
+                        gender="M"
+                        label={t("father")}
+                        value={field.value ?? ""}
+                        onChange={(id) => field.onChange(id)}
+                        noneLabel={t("none")}
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
