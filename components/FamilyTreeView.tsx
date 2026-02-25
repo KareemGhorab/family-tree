@@ -1,9 +1,11 @@
 "use client";
 
 import { api } from "@/app/service/api";
-import { useTreeRole } from "@/app/service/family-tree/tree/hooks";
-import { useFamilyTreeNodes } from "@/app/service/family-tree/tree/nodes/hooks";
-import { queryKeys, type FamilyNodeFlat } from "@/app/service/types";
+import {
+    useFamilyTree,
+    useTreeRole,
+} from "@/app/service/family-tree/tree/hooks";
+import { queryKeys, type FamilyNodeNested } from "@/app/service/types";
 import { AddMemberDialog } from "@/components/AddMemberDialog";
 import { FamilyMemberNode } from "@/components/FamilyMemberNode";
 import { NodeDetailDialog } from "@/components/NodeDetailDialog";
@@ -33,7 +35,22 @@ const nodeTypes: NodeTypes = {
   familyMember: FamilyMemberNode,
 };
 
-function buildFlowData(flatNodes: FamilyNodeFlat[]) {
+function flattenNestedNodes(roots: FamilyNodeNested[]): FamilyNodeNested[] {
+  const out: FamilyNodeNested[] = [];
+  function visit(node: FamilyNodeNested) {
+    out.push(node);
+    for (const child of node.children) visit(child);
+  }
+  for (const root of roots) visit(root);
+  return out;
+}
+
+function buildFlowDataFromNested(roots: FamilyNodeNested[]): {
+  nodes: Node[];
+  edges: Edge[];
+  flatNodes: FamilyNodeNested[];
+} {
+  const flatNodes = flattenNestedNodes(roots);
   const rfNodes: Node[] = flatNodes.map((n) => ({
     id: n.id,
     type: "familyMember",
@@ -65,7 +82,8 @@ function buildFlowData(flatNodes: FamilyNodeFlat[]) {
     }
   }
 
-  return layoutWithDagre(rfNodes, rfEdges);
+  const { nodes, edges } = layoutWithDagre(rfNodes, rfEdges);
+  return { nodes, edges, flatNodes };
 }
 
 function layoutWithDagre(nodes: Node[], edges: Edge[]) {
@@ -103,16 +121,16 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
   const t = useTranslations("trees");
   const tCommon = useTranslations("common");
   const queryClient = useQueryClient();
-  const { data: flatNodes, isLoading } = useFamilyTreeNodes(treeId);
+  const { data: treeData, isLoading } = useFamilyTree(treeId);
   const { data: roleData } = useTreeRole(treeId);
   const isEditor = roleData?.role === "EDITOR";
 
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
 
-  const { nodes, edges } = useMemo(
-    () => buildFlowData(flatNodes ?? []),
-    [flatNodes]
+  const { nodes, edges, flatNodes } = useMemo(
+    () => buildFlowDataFromNested(treeData?.roots ?? []),
+    [treeData?.roots]
   );
 
   const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
@@ -121,7 +139,7 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
 
   const onConnect = useCallback(
     (connection: Connection) => {
-      if (!isEditor || !flatNodes) return;
+      if (!isEditor || !flatNodes.length) return;
 
       const sourceNode = flatNodes.find((n) => n.id === connection.source);
       const targetNode = flatNodes.find((n) => n.id === connection.target);
@@ -139,9 +157,6 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
         .patch(`/api/family-node/${targetNode.id}`, { [field]: sourceNode.id })
         .then(() => {
           queryClient.invalidateQueries({
-            queryKey: queryKeys.familyTree.nodes(treeId),
-          });
-          queryClient.invalidateQueries({
             queryKey: queryKeys.familyTree.detail(treeId),
           });
         })
@@ -149,7 +164,7 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
           toast.error(getQueryErrorMessage(err));
         });
     },
-    [isEditor, flatNodes, treeId, queryClient, t, tCommon]
+    [isEditor, flatNodes, treeId, queryClient, t]
   );
 
   if (isLoading) {
