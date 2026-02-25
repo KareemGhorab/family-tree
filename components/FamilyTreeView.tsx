@@ -1,11 +1,9 @@
 "use client";
 
 import { api } from "@/app/service/api";
-import {
-    useFamilyTree,
-    useTreeRole,
-} from "@/app/service/family-tree/tree/hooks";
-import { queryKeys, type FamilyNodeNested } from "@/app/service/types";
+import { useTreeRole } from "@/app/service/family-tree/tree/hooks";
+import { useFamilyTreeNodes } from "@/app/service/family-tree/tree/nodes/hooks";
+import { queryKeys, type FamilyNodeFlat } from "@/app/service/types";
 import { AddMemberDialog } from "@/components/AddMemberDialog";
 import { FamilyMemberNode } from "@/components/FamilyMemberNode";
 import { NodeDetailDialog } from "@/components/NodeDetailDialog";
@@ -14,14 +12,13 @@ import { getQueryErrorMessage } from "@/lib/query-error";
 import { useQueryClient } from "@tanstack/react-query";
 import {
     Background,
-    Controls,
     ReactFlow,
     type Connection,
     type Edge,
     type Node,
     type NodeTypes,
     type ReactFlowInstance,
-    type Viewport,
+    type Viewport
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import ELK, { type ElkNode } from "elkjs/lib/elk.bundled.js";
@@ -37,25 +34,14 @@ const nodeTypes: NodeTypes = {
   familyMember: FamilyMemberNode,
 };
 
-function flattenNestedNodes(roots: FamilyNodeNested[]): FamilyNodeNested[] {
-  const out: FamilyNodeNested[] = [];
-  function visit(node: FamilyNodeNested) {
-    out.push(node);
-    for (const child of node.children) visit(child);
-  }
-  for (const root of roots) visit(root);
-  return out;
-}
-
-function buildFlowDataFromNested(roots: FamilyNodeNested[]): {
+function buildFlowDataFromFlat(flatNodesInput: FamilyNodeFlat[]): {
   nodes: Node[];
   edges: Edge[];
-  flatNodes: FamilyNodeNested[];
+  flatNodes: FamilyNodeFlat[];
 } {
-  const allNodes = flattenNestedNodes(roots);
   const seen = new Set<string>();
-  const flatNodes: FamilyNodeNested[] = [];
-  for (const n of allNodes) {
+  const flatNodes: FamilyNodeFlat[] = [];
+  for (const n of flatNodesInput) {
     if (!seen.has(n.id)) {
       seen.add(n.id);
       flatNodes.push(n);
@@ -108,7 +94,7 @@ function buildFlowDataFromNested(roots: FamilyNodeNested[]): {
 }
 
 function computeCouples(
-  flatNodes: FamilyNodeNested[],
+  flatNodes: FamilyNodeFlat[],
   nodeIds: Set<string>,
 ): {
   nodeIdToCouple: Map<string, string>;
@@ -164,7 +150,7 @@ const elk = new ELK();
 async function layoutWithElk(
   nodes: Node[],
   edges: Edge[],
-  flatNodes: FamilyNodeNested[],
+  flatNodes: FamilyNodeFlat[],
 ): Promise<{ nodes: Node[]; edges: Edge[] }> {
   const nodeIds = new Set(nodes.map((n) => n.id));
   const { nodeIdToCouple, couplePairs } = computeCouples(flatNodes, nodeIds);
@@ -192,23 +178,21 @@ async function layoutWithElk(
   const elkGraph: ElkNode = {
     id: "root",
     layoutOptions: {
-      "elk.algorithm": "layered",
-      "elk.direction": "DOWN",
-      "elk.spacing.nodeNode": "80",
-      "elk.layered.spacing.baseValue": "120",
-      "elk.layered.mergeEdges": "false",
-      "elk.layered.crossingMinimization.strategy": "LAYER_SWEEP",
-      "elk.layered.crossingMinimization.greedySwitch.type": "TWO_SIDED",
-      "elk.layered.nodePlacement.strategy": "NETWORK_SIMPLEX",
-      "elk.layered.thoroughness": "80",
-      "elk.separateConnectedComponents": "false",
-      "elk.edgeRouting": "ORTHOGONAL",
-      "elk.hierarchyHandling": "INCLUDE_CHILDREN",
+        "elk.algorithm": "layered",
+        "elk.direction": "DOWN",
+        "elk.spacing.nodeNode": "100",
+        "elk.layered.spacing.baseValue": "130",
+        "elk.layered.mergeEdges": "false",
+        "elk.layered.crossingMinimization.strategy": "LAYER_SWEEP",
+        "elk.layered.crossingMinimization.greedySwitch.type": "TWO_SIDED",
+        "elk.layered.nodePlacement.strategy": "NETWORK_SIMPLEX",
+        "elk.layered.thoroughness": "80",
+        "elk.separateConnectedComponents": "false",
+        "elk.edgeRouting": "ORTHOGONAL",
+        "elk.hierarchyHandling": "INCLUDE_CHILDREN",
 
-    //   "elk.portConstraints": "FREE",
-    //   "elk.edgeRouting": "ORTHOGONAL",
-    //   "elk.spacing.edgeEdge": "150",
-    //   "elk.layered.considerModelOrder.strategy": "NONE"
+        "elk.spacing.edgeEdge": "20",
+        "elk.layered.spacing.edgeEdgeBetweenLayers": "50",
     },
     children: rootChildren,
     edges: edges.map((e) => {
@@ -246,7 +230,7 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
   const t = useTranslations("trees");
   const tCommon = useTranslations("common");
   const queryClient = useQueryClient();
-  const { data: treeData, isLoading } = useFamilyTree(treeId);
+  const { data: nodesData, isLoading } = useFamilyTreeNodes(treeId);
   const { data: roleData } = useTreeRole(treeId);
   const isEditor = roleData?.role === "EDITOR";
 
@@ -333,8 +317,8 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
     edges: rawEdges,
     flatNodes,
   } = useMemo(
-    () => buildFlowDataFromNested(treeData?.roots ?? []),
-    [treeData?.roots],
+    () => buildFlowDataFromFlat(nodesData ?? []),
+    [nodesData],
   );
 
   const [nodes, setNodes] = useState<Node[]>([]);
@@ -389,7 +373,7 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
         .patch(`/api/family-node/${targetNode.id}`, { [field]: sourceNode.id })
         .then(() => {
           queryClient.invalidateQueries({
-            queryKey: queryKeys.familyTree.detail(treeId),
+            queryKey: queryKeys.familyTree.nodes(treeId),
           });
         })
         .catch((err) => {
