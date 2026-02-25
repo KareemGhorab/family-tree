@@ -291,10 +291,10 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
 
     let vx = (b.viewport.x - a.viewport.x) / dt;
     let vy = (b.viewport.y - a.viewport.y) / dt;
-    const velocityScale = 1.15;
+    const velocityScale = 0.95;
     vx *= velocityScale;
     vy *= velocityScale;
-    const maxSpeed = 2800;
+    const maxSpeed = 1800;
     const speed = Math.sqrt(vx * vx + vy * vy);
     if (speed > maxSpeed) {
       const scale = maxSpeed / speed;
@@ -302,8 +302,8 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
       vy *= scale;
     }
 
-    const FRICTION = 0.91;
-    const MIN_VELOCITY = 6;
+    const FRICTION = 0.82;
+    const MIN_VELOCITY = 12;
 
     let viewport: Viewport = { ...b.viewport };
     let lastTime = performance.now();
