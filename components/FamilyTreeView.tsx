@@ -423,7 +423,7 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
         onMoveEnd={onMoveEnd}
         fitView
         fitViewOptions={{ padding: 0.3 }}
-        minZoom={0.02}
+        minZoom={0.01}
         maxZoom={4}
         proOptions={{ hideAttribution: true }}
         className="h-full w-full"
