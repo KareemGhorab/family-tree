@@ -1,5 +1,5 @@
 import { requireAuth } from "@/lib/auth-guard";
-import { getFamilyTreesForUser, getFamilyAllTrees } from "@/lib/family-tree";
+import { getFamilyAllTrees } from "@/lib/family-tree";
 import { errorResponse, jsonResponse, parseBody } from "@/lib/helpers";
 import { prisma } from "@/lib/prisma";
 import { createTreeSchema } from "@/lib/validations";
@@ -7,9 +7,6 @@ import { NextRequest } from "next/server";
 
 export async function GET() {
   try {
-    const authResult = await requireAuth();
-    if (authResult.error) return authResult.error;
-
     const trees = await getFamilyAllTrees();
     return jsonResponse(trees);
   } catch (error) {

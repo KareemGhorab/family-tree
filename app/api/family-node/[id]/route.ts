@@ -8,9 +8,6 @@ type RouteContext = { params: Promise<{ id: string }> };
 
 export async function GET(_request: NextRequest, context: RouteContext) {
   try {
-    const authResult = await requireAuth();
-    if (authResult.error) return authResult.error;
-
     const { id } = await context.params;
 
     const node = await prisma.familyNode.findFirst({

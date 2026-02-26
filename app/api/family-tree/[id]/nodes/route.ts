@@ -1,5 +1,4 @@
 import { Prisma } from "@/app/generated/prisma/client";
-import { requireAuth } from "@/lib/auth-guard";
 import { errorResponse, jsonResponse, notDeleted } from "@/lib/helpers";
 import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
@@ -8,9 +7,6 @@ type RouteContext = { params: Promise<{ id: string }> };
 
 export async function GET(request: NextRequest, context: RouteContext) {
   try {
-    const authResult = await requireAuth();
-    if (authResult.error) return authResult.error;
-
     const { id } = await context.params;
     const searchParams = request.nextUrl.searchParams;
     const genderParam = searchParams.get("gender");

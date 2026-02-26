@@ -25,5 +25,5 @@ export default async function Home({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  redirect({ href: "/trees", locale });
+  redirect({ href: "/trees/cmlzm09af000004l5ofvzxvd6", locale });
 }
