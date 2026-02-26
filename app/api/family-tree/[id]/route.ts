@@ -76,7 +76,12 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 
     const nodes = await prisma.familyNode.findMany({
       where: { familyTreeId: id, ...notDeleted },
-      include: { photos: { where: notDeleted } },
+      include: {
+        photos: {
+          where: notDeleted,
+          orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+        },
+      },
       orderBy: { birthOrder: "asc" },
     });
 

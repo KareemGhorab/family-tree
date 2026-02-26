@@ -59,7 +59,12 @@ export async function POST(request: NextRequest) {
         motherId: motherId ?? null,
         fatherId: fatherId ?? null,
       },
-      include: { photos: { where: notDeleted } },
+      include: {
+        photos: {
+          where: notDeleted,
+          orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+        },
+      },
     });
 
     const { deletedAt, ...nodeResult } = node;

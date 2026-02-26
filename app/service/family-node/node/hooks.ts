@@ -224,3 +224,30 @@ export function useDeletePhoto(nodeId: string | null, treeId?: string | null) {
     },
   });
 }
+
+/** PATCH /api/family-node/[id]/photos — reorder photos */
+export function useReorderPhotos(
+  nodeId: string | null,
+  treeId?: string | null
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (photoIds: string[]) =>
+      api
+        .patch<Photo[]>(`/api/family-node/${nodeId}/photos`, { photoIds })
+        .then((r) => r.data),
+    onSettled: () => {
+      if (nodeId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.familyNode.detail(nodeId),
+        });
+      }
+      if (treeId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.familyTree.nodes(treeId),
+        });
+      }
+    },
+  });
+}

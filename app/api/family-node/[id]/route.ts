@@ -13,7 +13,10 @@ export async function GET(_request: NextRequest, context: RouteContext) {
     const node = await prisma.familyNode.findFirst({
       where: { id, ...notDeleted },
       include: {
-        photos: { where: notDeleted },
+        photos: {
+          where: notDeleted,
+          orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+        },
         mother: { select: { id: true, firstName: true, lastName: true } },
         father: { select: { id: true, firstName: true, lastName: true } },
       },
@@ -96,7 +99,10 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       where: { id },
       data,
       include: {
-        photos: { where: notDeleted },
+        photos: {
+          where: notDeleted,
+          orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+        },
         mother: { select: { id: true, firstName: true, lastName: true } },
         father: { select: { id: true, firstName: true, lastName: true } },
       },
