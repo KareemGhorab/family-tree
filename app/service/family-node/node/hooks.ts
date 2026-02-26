@@ -175,7 +175,10 @@ export function useDeleteFamilyNode(
 }
 
 /** POST /api/family-node/[id]/photos — add a photo to a node */
-export function useAddPhoto(nodeId: string | null) {
+export function useAddPhoto(
+  nodeId: string | null,
+  treeId?: string | null
+) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -189,12 +192,17 @@ export function useAddPhoto(nodeId: string | null) {
           queryKey: queryKeys.familyNode.detail(nodeId),
         });
       }
+      if (treeId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.familyTree.nodes(treeId),
+        });
+      }
     },
   });
 }
 
 /** DELETE /api/photo/[id] — soft-delete a photo */
-export function useDeletePhoto(nodeId: string | null) {
+export function useDeletePhoto(nodeId: string | null, treeId?: string | null) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -206,6 +214,11 @@ export function useDeletePhoto(nodeId: string | null) {
       if (nodeId) {
         queryClient.invalidateQueries({
           queryKey: queryKeys.familyNode.detail(nodeId),
+        });
+      }
+      if (treeId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.familyTree.nodes(treeId),
         });
       }
     },

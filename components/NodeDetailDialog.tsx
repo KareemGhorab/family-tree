@@ -104,6 +104,7 @@ export function NodeDetailDialog({
                   />
                   <PhotoManager
                     nodeId={node.id}
+                    treeId={treeId}
                     photos={node.photos}
                     isEditor={isEditor}
                     showUpload={true}
@@ -196,6 +197,7 @@ export function NodeDetailDialog({
 
                   <PhotoManager
                     nodeId={node.id}
+                    treeId={treeId}
                     photos={node.photos}
                     isEditor={isEditor}
                     showUpload={false}

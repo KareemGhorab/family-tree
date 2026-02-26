@@ -6,14 +6,17 @@ import {
     useDeletePhoto,
 } from "@/app/service/family-node/node/hooks";
 import type { Photo } from "@/app/service/types";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { useImageLightbox } from "@/components/ImageLightboxProvider";
 import { Button } from "@/components/ui/button";
 import { UploadButton } from "@uploadthing/react";
 import { Loader2, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 
 interface PhotoManagerProps {
   nodeId: string;
+  treeId: string | null;
   photos: Photo[];
   isEditor: boolean;
   showUpload?: boolean;
@@ -21,14 +24,17 @@ interface PhotoManagerProps {
 
 export function PhotoManager({
   nodeId,
+  treeId,
   photos,
   isEditor,
   showUpload = true,
 }: PhotoManagerProps) {
   const t = useTranslations("trees");
+  const tCommon = useTranslations("common");
   const { openLightbox } = useImageLightbox();
-  const addPhoto = useAddPhoto(nodeId);
-  const deletePhoto = useDeletePhoto(nodeId);
+  const addPhoto = useAddPhoto(nodeId, treeId);
+  const deletePhoto = useDeletePhoto(nodeId, treeId);
+  const [photoToDelete, setPhotoToDelete] = useState<Photo | null>(null);
 
   return (
     <div>
@@ -62,15 +68,15 @@ export function PhotoManager({
                 <Button
                   variant="destructive"
                   size="icon-xs"
-                  className="absolute top-1 right-1 opacity-0 transition-opacity group-hover:opacity-100"
+                  className="absolute top-1 right-1"
                   onClick={(e) => {
                     e.stopPropagation();
-                    deletePhoto.mutate(photo.id);
+                    setPhotoToDelete(photo);
                   }}
                   disabled={deletePhoto.isPending}
                   aria-label={t("removePhoto")}
                 >
-                  {deletePhoto.isPending ? (
+                  {deletePhoto.isPending && photoToDelete?.id === photo.id ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
                   ) : (
                     <Trash2 className="h-3 w-3" />
@@ -103,6 +109,24 @@ export function PhotoManager({
           />
         </div>
       )}
+
+      <ConfirmDialog
+        open={photoToDelete !== null}
+        onConfirm={() => {
+          if (photoToDelete) {
+            deletePhoto.mutate(photoToDelete.id, {
+              onSettled: () => setPhotoToDelete(null),
+            });
+          }
+        }}
+        onCancel={() => setPhotoToDelete(null)}
+        title={t("confirmDelete")}
+        description={t("confirmDeleteDescription")}
+        confirmLabel={t("confirm")}
+        cancelLabel={tCommon("cancel")}
+        isPending={deletePhoto.isPending}
+        variant="destructive"
+      />
     </div>
   );
 }

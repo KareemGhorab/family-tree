@@ -1,3 +1,4 @@
+import { CreateFamilyTreeDialog } from "@/components/CreateFamilyTreeDialog";
 import { TreeCardLink } from "@/components/TreeCardLink";
 import { getFamilyAllTrees } from "@/lib/family-tree";
 // import { getSessionOrRedirect } from "@/lib/require-session";
@@ -18,7 +19,7 @@ export default async function TreesPage({
         <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
           {t("title")}
         </h1>
-        {/* <CreateFamilyTreeDialog /> */}
+        <CreateFamilyTreeDialog />
       </div>
 
       {trees.length === 0 ? (
