@@ -19,7 +19,7 @@ export default async function TreesPage({
         <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
           {t("title")}
         </h1>
-        <CreateFamilyTreeDialog />
+        {/* <CreateFamilyTreeDialog /> */}
       </div>
 
       {trees.length === 0 ? (
