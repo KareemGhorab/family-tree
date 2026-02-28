@@ -116,52 +116,52 @@ export function StatisticsView({ treeId }: StatisticsViewProps) {
   }));
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-semibold text-zinc-900 dark:text-zinc-100">
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+      <div className="mb-6 text-center sm:mb-8">
+        <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 sm:text-3xl">
           {t("familyMembersCount", {
             count: data.totalNodes.toLocaleString(),
           })}
         </h1>
       </div>
 
-      <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <Card>
+      <div className="mb-6 grid grid-cols-1 gap-3 sm:mb-8 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-5">
+        <Card className="min-w-0">
           <CardHeader className="pb-2">
             <CardDescription>{t("totalMembers")}</CardDescription>
-            <CardTitle className="text-3xl">{data.totalNodes}</CardTitle>
+            <CardTitle className="text-2xl sm:text-3xl">{data.totalNodes}</CardTitle>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="min-w-0">
           <CardHeader className="pb-2">
             <CardDescription>{t("avgChildrenPerPerson")}</CardDescription>
-            <CardTitle className="text-3xl">
+            <CardTitle className="text-2xl sm:text-3xl">
               {data.avgChildrenPerPerson.toFixed(1)}
             </CardTitle>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="min-w-0">
           <CardHeader className="pb-2">
             <CardDescription>{t("maxChildren")}</CardDescription>
-            <CardTitle className="text-3xl">{data.maxChildren}</CardTitle>
+            <CardTitle className="text-2xl sm:text-3xl">{data.maxChildren}</CardTitle>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="min-w-0">
           <CardHeader className="pb-2">
             <CardDescription>{t("rootCount")}</CardDescription>
-            <CardTitle className="text-3xl">{data.rootCount}</CardTitle>
+            <CardTitle className="text-2xl sm:text-3xl">{data.rootCount}</CardTitle>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="min-w-0">
           <CardHeader className="pb-2">
             <CardDescription>{t("treeDepth")}</CardDescription>
-            <CardTitle className="text-3xl">{data.treeDepth}</CardTitle>
+            <CardTitle className="text-2xl sm:text-3xl">{data.treeDepth}</CardTitle>
           </CardHeader>
         </Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
+      <div className="grid min-w-0 grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle>{t("genderRatio")}</CardTitle>
             <CardDescription>
@@ -171,7 +171,7 @@ export function StatisticsView({ treeId }: StatisticsViewProps) {
           </CardHeader>
           <CardContent>
             {genderData.length > 0 ? (
-              <ChartContainer config={genderChartConfig} className="min-h-[200px] w-full">
+              <ChartContainer config={genderChartConfig} className="min-h-[180px] w-full min-w-0 sm:min-h-[200px]">
                 <PieChart>
                   <ChartTooltip
                     content={
@@ -206,7 +206,7 @@ export function StatisticsView({ treeId }: StatisticsViewProps) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle>{t("photoCoverage")}</CardTitle>
             <CardDescription>
@@ -216,7 +216,7 @@ export function StatisticsView({ treeId }: StatisticsViewProps) {
           </CardHeader>
           <CardContent>
             {photoData.length > 0 ? (
-              <ChartContainer config={photoChartConfig} className="min-h-[200px] w-full">
+              <ChartContainer config={photoChartConfig} className="min-h-[180px] w-full min-w-0 sm:min-h-[200px]">
                 <PieChart>
                   <ChartTooltip
                     content={
@@ -251,7 +251,7 @@ export function StatisticsView({ treeId }: StatisticsViewProps) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle>{t("livingVsDeceased")}</CardTitle>
             <CardDescription>
@@ -261,7 +261,7 @@ export function StatisticsView({ treeId }: StatisticsViewProps) {
           </CardHeader>
           <CardContent>
             {livingData.length > 0 ? (
-              <ChartContainer config={livingChartConfig} className="min-h-[200px] w-full">
+              <ChartContainer config={livingChartConfig} className="min-h-[180px] w-full min-w-0 sm:min-h-[200px]">
                 <PieChart>
                   <ChartTooltip
                     content={
@@ -297,11 +297,11 @@ export function StatisticsView({ treeId }: StatisticsViewProps) {
         </Card>
 
         {generationsData.length > 0 && (
-          <Card>
+          <Card className="min-w-0">
             <CardHeader>
               <CardTitle>{t("generations")}</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-x-auto">
               <ChartContainer
                 config={Object.fromEntries(
                   generationsData.map((g, i) => [
@@ -312,9 +312,9 @@ export function StatisticsView({ treeId }: StatisticsViewProps) {
                     },
                   ])
                 )}
-                className="min-h-[200px] w-full"
+                className="min-h-[200px] w-full min-w-[280px]"
               >
-                <BarChart data={generationsData} margin={{ left: 12, right: 12 }}>
+                <BarChart data={generationsData} margin={{ left: 8, right: 8 }}>
                   <XAxis dataKey="name" />
                   <YAxis />
                   <ChartTooltip
@@ -333,11 +333,11 @@ export function StatisticsView({ treeId }: StatisticsViewProps) {
         )}
 
         {decadesData.length > 0 && (
-          <Card>
+          <Card className="min-w-0">
             <CardHeader>
               <CardTitle>{t("birthDecades")}</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-x-auto">
               <ChartContainer
                 config={Object.fromEntries(
                   decadesData.map((d, i) => [
@@ -348,9 +348,9 @@ export function StatisticsView({ treeId }: StatisticsViewProps) {
                     },
                   ])
                 )}
-                className="min-h-[200px] w-full"
+                className="min-h-[200px] w-full min-w-[280px]"
               >
-                <BarChart data={decadesData} margin={{ left: 12, right: 12 }}>
+                <BarChart data={decadesData} margin={{ left: 8, right: 8 }}>
                   <XAxis dataKey="name" />
                   <YAxis />
                   <ChartTooltip
@@ -368,11 +368,11 @@ export function StatisticsView({ treeId }: StatisticsViewProps) {
           </Card>
         )}
 
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle>{t("siblingsDistribution")}</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="overflow-x-auto">
             {siblingsData.some((s) => s.count > 0) ? (
               <ChartContainer
                 config={Object.fromEntries(
@@ -384,9 +384,9 @@ export function StatisticsView({ treeId }: StatisticsViewProps) {
                     },
                   ])
                 )}
-                className="min-h-[200px] w-full"
+                className="min-h-[200px] w-full min-w-[280px]"
               >
-                <BarChart data={siblingsData} margin={{ left: 12, right: 12 }}>
+                <BarChart data={siblingsData} margin={{ left: 8, right: 8 }}>
                   <XAxis dataKey="name" />
                   <YAxis />
                   <ChartTooltip
@@ -406,9 +406,9 @@ export function StatisticsView({ treeId }: StatisticsViewProps) {
           </CardContent>
         </Card>
       </div>
-      <div className="my-8" />
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Card>
+      <div className="my-6 sm:my-8" />
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle>{t("missingGender")}</CardTitle>
             <CardDescription>
@@ -419,10 +419,10 @@ export function StatisticsView({ treeId }: StatisticsViewProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold">{data.missingGenderCount}</p>
+            <p className="text-2xl font-semibold sm:text-3xl">{data.missingGenderCount}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle>{t("missingParents")}</CardTitle>
             <CardDescription>
@@ -433,7 +433,7 @@ export function StatisticsView({ treeId }: StatisticsViewProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold">{data.missingParentsCount}</p>
+            <p className="text-2xl font-semibold sm:text-3xl">{data.missingParentsCount}</p>
           </CardContent>
         </Card>
       </div>
