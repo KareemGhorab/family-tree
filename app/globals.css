@@ -121,8 +121,8 @@ body {
 }
 
 .tree-view-height {
-  height: calc(100vh - 3.5rem);
-  height: calc(100svh - 3.5rem);
+  height: calc(100vh - 7rem);
+  height: calc(100svh - 7rem);
   padding-bottom: env(safe-area-inset-bottom, 0);
   box-sizing: border-box;
 }

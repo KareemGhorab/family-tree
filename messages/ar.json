@@ -84,5 +84,35 @@
   },
   "settings": {
     "title": "الإعدادات"
+  },
+  "statistics": {
+    "title": "الإحصائيات",
+    "tree": "الشجرة",
+    "totalMembers": "إجمالي الأعضاء",
+    "familyMembersCount": "{count} أعضاء العائلة",
+    "genderRatio": "نسبة الجنس",
+    "male": "ذكر",
+    "female": "أنثى",
+    "unknown": "غير معروف",
+    "photoCoverage": "تغطية الصور",
+    "withPhotos": "بصور",
+    "withoutPhotos": "بدون صور",
+    "avgChildrenPerPerson": "متوسط عدد الأطفال لكل شخص",
+    "maxChildren": "أكثر أطفالاً",
+    "rootCount": "الجذور",
+    "treeDepth": "عمق الشجرة",
+    "generations": "الأجيال",
+    "generationLabel": "الجيل {n}",
+    "birthDecades": "عقود الميلاد",
+    "livingVsDeceased": "الأحياء مقابل المتوفين",
+    "living": "أحياء",
+    "deceased": "متوفون",
+    "siblingsDistribution": "الإخوة لكل شخص",
+    "siblingsCount": "{n} إخوة",
+    "noSiblings": "لا إخوة",
+    "missingGender": "جنس مفقود",
+    "missingParents": "والدان مفقودان",
+    "noData": "لا توجد بيانات بعد",
+    "loading": "جاري تحميل الإحصائيات..."
   }
 }

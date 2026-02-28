@@ -70,6 +70,8 @@ export const queryKeys = {
       filters?: { gender?: "M" | "F"; search?: string }
     ) =>
       [...queryKeys.familyTree.all, treeId, "nodes", filters ?? null] as const,
+    statistics: (treeId: string) =>
+      [...queryKeys.familyTree.detail(treeId), "statistics"] as const,
   },
   familyNode: {
     all: ["family-node"] as const,
@@ -78,3 +80,19 @@ export const queryKeys = {
 } as const;
 
 export type TreeRole = { role: "EDITOR" | "VIEWER" | "NONE" };
+
+export type TreeStatistics = {
+  totalNodes: number;
+  genderRatio: { male: number; female: number; unknown: number };
+  photoCoverage: { withPhotos: number; withoutPhotos: number };
+  avgChildrenPerPerson: number;
+  maxChildren: number;
+  rootCount: number;
+  treeDepth: number;
+  generations: { generation: number; count: number }[];
+  birthDecades: { decade: string; count: number }[];
+  livingVsDeceased: { living: number; deceased: number };
+  siblingsDistribution: { count: number; numberOfPeople: number }[];
+  missingGenderCount: number;
+  missingParentsCount: number;
+};

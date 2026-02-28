@@ -84,5 +84,35 @@
   },
   "settings": {
     "title": "Settings"
+  },
+  "statistics": {
+    "title": "Statistics",
+    "tree": "Tree",
+    "totalMembers": "Total members",
+    "familyMembersCount": "{count} family members",
+    "genderRatio": "Gender ratio",
+    "male": "Male",
+    "female": "Female",
+    "unknown": "Unknown",
+    "photoCoverage": "Photo coverage",
+    "withPhotos": "With photos",
+    "withoutPhotos": "Without photos",
+    "avgChildrenPerPerson": "Average children per person",
+    "maxChildren": "Most children",
+    "rootCount": "Root ancestors",
+    "treeDepth": "Tree depth",
+    "generations": "Generations",
+    "generationLabel": "Generation {n}",
+    "birthDecades": "Birth decades",
+    "livingVsDeceased": "Living vs deceased",
+    "living": "Living",
+    "deceased": "Deceased",
+    "siblingsDistribution": "Siblings per person",
+    "siblingsCount": "{n} siblings",
+    "noSiblings": "No siblings",
+    "missingGender": "Missing gender",
+    "missingParents": "Missing parents",
+    "noData": "No data available yet",
+    "loading": "Loading statistics..."
   }
 }

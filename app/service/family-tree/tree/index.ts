@@ -1,5 +1,6 @@
 export {
-  useFamilyTree,
-  useUpdateFamilyTree,
-  useDeleteFamilyTree,
+    useDeleteFamilyTree, useFamilyTree,
+    useUpdateFamilyTree
 } from "./hooks";
+export { useTreeStatistics } from "./statistics";
+
