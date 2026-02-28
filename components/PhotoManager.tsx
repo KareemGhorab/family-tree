@@ -7,6 +7,7 @@ import {
     useReorderPhotos,
 } from "@/app/service/family-node/node/hooks";
 import type { Photo } from "@/app/service/types";
+import { BlurredImage } from "@/components/BlurredImage";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { useImageLightbox } from "@/components/ImageLightboxProvider";
 import { Button } from "@/components/ui/button";
@@ -97,9 +98,10 @@ function SortablePhotoTile({
         className="block size-full cursor-pointer"
         onClick={() => openLightbox(photo.blobUrl)}
       >
-        <img
+        <BlurredImage
           src={photo.blobUrl}
           alt=""
+          wrapperClassName="aspect-square"
           className="size-full object-cover"
         />
       </button>

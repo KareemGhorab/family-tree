@@ -1,7 +1,8 @@
 "use client";
 
+import { BlurredImage } from "@/components/BlurredImage";
 import { useImageLightbox } from "@/components/ImageLightboxProvider";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 import { User } from "lucide-react";
 
@@ -22,18 +23,18 @@ export function FamilyMemberNode({
       {data.photo ? (
         <button
           type="button"
-          className="cursor-pointer rounded-full outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 dark:focus:ring-offset-zinc-900"
+          className="block h-14 w-14 cursor-pointer overflow-hidden rounded-full outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 dark:focus:ring-offset-zinc-900"
           onClick={(e) => {
             e.stopPropagation();
             openLightbox(data.photo!, data.firstName);
           }}
         >
-          <Avatar className="h-14 w-14">
-            <AvatarImage src={data.photo} alt={data.firstName} />
-            <AvatarFallback className="bg-zinc-100 dark:bg-zinc-800">
-              <User className="h-6 w-6 text-zinc-400" />
-            </AvatarFallback>
-          </Avatar>
+          <BlurredImage
+            src={data.photo}
+            alt={data.firstName}
+            wrapperClassName="rounded-full"
+            className="rounded-full"
+          />
         </button>
       ) : (
         <Avatar className="h-14 w-14">

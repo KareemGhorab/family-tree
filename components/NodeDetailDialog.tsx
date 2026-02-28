@@ -4,11 +4,12 @@ import {
     useDeleteFamilyNode,
     useFamilyNode,
 } from "@/app/service/family-node/node/hooks";
+import { BlurredImage } from "@/components/BlurredImage";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { EditNodeForm } from "@/components/EditNodeForm";
 import { useImageLightbox } from "@/components/ImageLightboxProvider";
 import { PhotoManager } from "@/components/PhotoManager";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -116,7 +117,7 @@ export function NodeDetailDialog({
                     {node.photos?.[0]?.blobUrl ? (
                       <button
                         type="button"
-                        className="cursor-pointer rounded-full outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 dark:focus:ring-offset-zinc-900"
+                        className="block h-16 w-16 cursor-pointer overflow-hidden rounded-full outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 dark:focus:ring-offset-zinc-900"
                         onClick={() =>
                           openLightbox(
                             node.photos[0].blobUrl,
@@ -124,15 +125,12 @@ export function NodeDetailDialog({
                           )
                         }
                       >
-                        <Avatar className="h-16 w-16">
-                          <AvatarImage
-                            src={node.photos[0].blobUrl}
-                            alt={node.firstName}
-                          />
-                          <AvatarFallback className="bg-zinc-100 dark:bg-zinc-800">
-                            <User className="h-8 w-8 text-zinc-400" />
-                          </AvatarFallback>
-                        </Avatar>
+                        <BlurredImage
+                          src={node.photos[0].blobUrl}
+                          alt={node.firstName}
+                          wrapperClassName="rounded-full"
+                          className="rounded-full"
+                        />
                       </button>
                     ) : (
                       <Avatar className="h-16 w-16">
