@@ -78,7 +78,9 @@
     "setGenderFirst": "حدد الجنس على العقدة المصدر أولاً",
     "loginFirst": "يرجى تسجيل الدخول لعرض هذه الشجرة العائلية.",
     "motherMustBeFemale": "يجب أن تكون الأم أنثى",
-    "fatherMustBeMale": "يجب أن يكون الأب ذكراً"
+    "fatherMustBeMale": "يجب أن يكون الأب ذكراً",
+    "exportTree": "تحميل كـ PNG",
+    "exportingTree": "جاري التصدير..."
   },
   "settings": {
     "title": "الإعدادات"

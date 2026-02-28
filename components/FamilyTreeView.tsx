@@ -5,20 +5,22 @@ import { useTreeRole } from "@/app/service/family-tree/tree/hooks";
 import { useFamilyTreeNodes } from "@/app/service/family-tree/tree/nodes/hooks";
 import { queryKeys, type FamilyNodeFlat } from "@/app/service/types";
 import { AddMemberDialog } from "@/components/AddMemberDialog";
+import { ExportTreeButton } from "@/components/ExportTreeButton";
 import { FamilyMemberNode } from "@/components/FamilyMemberNode";
 import { NodeDetailDialog } from "@/components/NodeDetailDialog";
 import { Button } from "@/components/ui/button";
 import { getQueryErrorMessage } from "@/lib/query-error";
 import { useQueryClient } from "@tanstack/react-query";
 import {
-    Background,
-    ReactFlow,
-    type Connection,
-    type Edge,
-    type Node,
-    type NodeTypes,
-    type ReactFlowInstance,
-    type Viewport
+  Background,
+  Panel,
+  ReactFlow,
+  type Connection,
+  type Edge,
+  type Node,
+  type NodeTypes,
+  type ReactFlowInstance,
+  type Viewport
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import ELK, { type ElkNode } from "elkjs/lib/elk.bundled.js";
@@ -429,6 +431,12 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
         className="h-full w-full"
       >
         <Background />
+        <Panel
+          position="bottom-left"
+          className="z-[60] ml-6 [margin-bottom:max(1.5rem,env(safe-area-inset-bottom))]"
+        >
+          <ExportTreeButton isEmpty={nodes.length === 0} />
+        </Panel>
       </ReactFlow>
 
       {isEditor && (

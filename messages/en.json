@@ -78,7 +78,9 @@
     "setGenderFirst": "Set gender on the source node first",
     "loginFirst": "Please sign in to view this family tree.",
     "motherMustBeFemale": "Mother must be female",
-    "fatherMustBeMale": "Father must be male"
+    "fatherMustBeMale": "Father must be male",
+    "exportTree": "Download as PNG",
+    "exportingTree": "Exporting..."
   },
   "settings": {
     "title": "Settings"
