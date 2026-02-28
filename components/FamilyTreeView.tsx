@@ -164,7 +164,7 @@ async function layoutWithElk(
       layoutOptions: {
         "elk.algorithm": "layered",
         "elk.direction": "RIGHT",
-        "elk.spacing.nodeNode": "160",
+        "elk.spacing.nodeNode": "5",
       },
       children: [makeElkPersonNode(a), makeElkPersonNode(b)],
     });
@@ -180,18 +180,18 @@ async function layoutWithElk(
     layoutOptions: {
         "elk.algorithm": "layered",
         "elk.direction": "DOWN",
-        "elk.spacing.nodeNode": "100",
-        "elk.layered.spacing.baseValue": "130",
+        "elk.spacing.nodeNode": "40",
+        "elk.layered.spacing.baseValue": "300",
         "elk.layered.mergeEdges": "false",
         "elk.layered.crossingMinimization.strategy": "LAYER_SWEEP",
         "elk.layered.crossingMinimization.greedySwitch.type": "TWO_SIDED",
         "elk.layered.nodePlacement.strategy": "NETWORK_SIMPLEX",
-        "elk.layered.thoroughness": "80",
+        "elk.layered.thoroughness": "150",
         "elk.separateConnectedComponents": "false",
         "elk.edgeRouting": "ORTHOGONAL",
         "elk.hierarchyHandling": "INCLUDE_CHILDREN",
-        "elk.spacing.edgeEdge": "20",
-        "elk.layered.spacing.edgeEdgeBetweenLayers": "50",
+        "elk.spacing.edgeEdge": "55",
+        "elk.layered.spacing.edgeEdgeBetweenLayers": "80",
     },
     children: rootChildren,
     edges: edges.map((e) => {
@@ -423,7 +423,7 @@ export function FamilyTreeView({ treeId }: FamilyTreeViewProps) {
         onMoveEnd={onMoveEnd}
         fitView
         fitViewOptions={{ padding: 0.3 }}
-        minZoom={0.01}
+        minZoom={0.009}
         maxZoom={4}
         proOptions={{ hideAttribution: true }}
         className="h-full w-full"
